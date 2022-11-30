@@ -5,7 +5,7 @@
 	No esta exacto el calculo de vida mas promedora
 	Deberia devolver un float
 	Pero en C la funcion solo puede devolver un tipo de dato
-	El tipo d dato que devuelve la funcion tendria que ser algo como un UNION
+	El tipo de dato que devuelve la funcion tendria que ser algo como un UNION
 */
 
 enum types{ VIDA, PROFUNDIDAD, PROMETEDORA };
