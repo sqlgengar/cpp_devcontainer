@@ -1,4 +1,4 @@
-Repositorio para crear y utiliza un ambiente de desarrollo con Devcontainers.
+Repositorio para crear y utilizar un ambiente de desarrollo con Devcontainers.
 Devcontainers necesita esencialmente Docker y Visual Code instalado con las exteniones de
 Dev Containers
 https://code.visualstudio.com/docs/devcontainers/containers
