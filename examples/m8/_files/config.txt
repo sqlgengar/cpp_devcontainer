@@ -1,0 +1,4 @@
+Archivo de configuración
+Tamaño de arrays: 25
+Año: 2019
+Máximo de líneas: 150
