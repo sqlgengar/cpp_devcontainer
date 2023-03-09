@@ -1,42 +1,81 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
+
+#define MAX_NOTES 2
+
+enum types
+{
+    FILE_NUMBER =   0,
+    NOTES =         1
+};
+
+typedef struct
+{
+    int file_number;
+    int *notes[MAX_NOTES];
+
+} Students;
+
+void load_data( int*, int );
+void wirte_file( char*, int, int, int );
 
 int main()
 {
-    int Nx = 0, Ny = 0;
-    double T = 0;
-    int has_Nx = 0, has_Ny = 0, has_T = 0;
-    char buf[80];
-    FILE *file;
+    Students student;
+    char *path = "./examples/m8/_files/alumnos.txt";
+    int is_file = -1;
 
-    if ((file = fopen("test.txt", "r")) == NULL) {
-        fprintf(stderr, "cannot open test.txt\n");
-        return 1;
-    }
+    do
+    {
+        printf( "enter file number of student or (-1) for exit \n" );
 
-    while (fgets(buf, sizeof buf, file)) {
-        if (buf[strspn(buf, " ")] == '\n')  /* accept blank lines */
-            continue;
+        load_data( &student.file_number, FILE_NUMBER );
 
-        if (sscanf(buf, " Nx = %d", &Nx) == 1)
-            has_Nx = 1;
-        else
-        if (sscanf(buf, " Ny = %d", &Ny) == 1)
-            has_Ny = 1;
-        else
-        if (sscanf(buf, " T = %lf", &T) == 1)
-            has_T = 1;
-        else
-            fprintf(stderr, "invalid line: %s", buf);
-    }
-    fclose(file);
+        if( student.file_number == -1 ) continue;
+        
+        for( int i = 0; i < MAX_NOTES; i++ )
+        {
+            printf( "enter the note %d of %d for student \n", i+1, MAX_NOTES );
 
-    // Print values to check
-    if (has_Nx)
-        printf("Value of Nx is %d\n", Nx);
-    if (has_Ny)
-        printf("Value of Ny is %d\n", Ny);
-    if (has_T)
-        printf("Value of T is %g\n", T);
+            load_data( &student.notes[i], NOTES );
+
+        }        
+
+    }while( student.file_number != -1 );
+
+    printf( "%d legajo \n", student.file_number );
+    printf( "%d nota \n", student.notes[0] );
+    
     return 0;
+
+}
+
+void load_data( int *value, int type )
+{
+    int temp;
+
+    switch( type )
+    {
+        case FILE_NUMBER:
+
+            scanf( " %d", &temp );
+            fflush( stdin );
+
+            if( temp == -1 ) return;
+
+            (*value) = temp;
+
+        break;
+    
+        case NOTES:
+
+            scanf( " %d", &temp );
+            fflush( stdin );
+
+            (*value) = temp;
+
+        break;
+
+    }
+
 }
