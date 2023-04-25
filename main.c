@@ -1,314 +1,231 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <string.h>
-#include<time.h>
-#include<ctype.h>
-#include <math.h>
-//#include<conio.h>
+#include <stdbool.h>
 
+#define MAX_PRIME 20
 
-#define MAX_DESCRIPCION 80
-#define p printf
-#define s scanf
+typedef struct 
+{ 
+    int index;
+    int prime_number;
+} Register;
 
-// Definici�n de la estructura Producto
-typedef struct
-{
-    int codigo;
-    char descripcion[MAX_DESCRIPCION];
-    float precio;
-    int signal;
-} Producto;
-
-int verifica(FILE *, char *);
-void listarProductos(FILE *, char *);
-void tecla(void);
-void agregarProducto(FILE *);
-void eliminarProducto(FILE *);
-void modificarProducto(FILE *);
-void EliminaLogiamente(FILE *);
-int error(char *);
-void linea(int);
-int menprin(void);
+void init_register( Register[] );
+int generate_random_number();
+int is_prime( int );
+bool is_repeat( Register[], int );
+void fill_unique_primes( Register[], int, int* );
+void write_file_binary( Register[], int );
+void main_system();
+void printr( Register[] );
+void write_file( Register[], char* );
+void printb();
+void load_binari( Register[] );
+// BOGOSORT!!!
+void sort_primes( Register[] );
+void print_bogosort( Register[] );
 
 int main()
 {
-    int op, flag;
-    //system("color 9f");
-    FILE *archivo;
-    char *nomarch = "./estructura_db/practice_c/_files/productos.dat";
+    main_system();
 
-    do
-    {
-        op = menprin();
-        switch (op)
-        {
-        case 1:
-        {
-            //system("cls");
-            flag=verifica(archivo,nomarch);
-            if (flag == 0)
-            {
-                p("\n EL ARCHIVO %s NO EXISTE SU APERTURA SERa DE ESCRITURA!! \n", nomarch);
-                archivo = fopen(nomarch, "wb+");
-            }
-            else
-            {
-                p("\n EL ARCHIVO %s EXISTE SU APERTURA SER%c DE LECTURA-ESCRITURA!! \n", nomarch, 181);
-                archivo = fopen(nomarch, "rb+");
-            }
-            agregarProducto(archivo);
-            fclose(archivo);
-            break;
-        }
-        case 2:
-           {
-               // Elimina ficamente el registro del archivo
-               //system("cls");
-                flag = verifica(archivo, nomarch);
-                if (flag == 0)
-                {
-                    p("\n NO SE PUEDEN PROCESAR LOS PRODUCTOS PORQUE EL ARCHIVO %s NO EXISTE!!!!", nomarch);
-                    //getch();
-                }
-                else
-                {
-                    archivo = fopen(nomarch, "rb+");
-                    //eliminarProductoFisicamente(archivo);
-                    fclose(archivo);
-                }
-           }
-            break;
-        case 3:
-        {
-            // modifica el registro en el archivo
-            //system("cls");
-            flag = verifica(archivo, nomarch);
-            if (flag == 0)
-            {
-                p("\n NO SE PUEDEN PROCESAR LOS PRODUCTOS PORQUE EL ARCHIVO %s NO EXISTE!!!!", nomarch);
-                //getch();
-            }
-            else
-            {
-                archivo = fopen(nomarch, "rb+");
-                modificarProducto(archivo);
-                fclose(archivo);
-            }
-            break;
-        }
-        case 4:
-        {
-            // listamos los productos del archivo
-            //system("cls");
-            flag = verifica(archivo, nomarch);
-            if (flag == 0)
-            {
-                p("\n NO SE PUEDEN PROCESAR LOS PRODUCTOS PORQUE EL ARCHIVO %s NO EXISTE!!!!", nomarch);
-                //getch();
-            }
-            else
-            {
-                archivo = fopen(nomarch, "rb+");
-                listarProductos(archivo, "PRODUCTOS");
-                fclose(archivo);
-            }
-            break;
-        }
-        case 5:
-        {
-            // Elimina Logicamente un registro del archivo
-            //system("cls");
-            flag = verifica(archivo, nomarch);
-            if (flag == 0)
-            {
-                p("\n NO SE PUEDEN PROCESAR LOS PRODUCTOS PORQUE EL ARCHIVO %s NO EXISTE!!!!", nomarch);
-                //getch();
-            }
-            else
-            {
-                archivo = fopen(nomarch, "rb+");
-                EliminaLogiamente(archivo);
-                fclose(archivo);
-            }
-            break;
-        }
-        }
-    } while (op < 6);
-    p("\n\n \t\t***** PRESIONE UNA TECLA LA SALIR DEL PROGRAMA!!! *****");
-    //system("cls");
     return 0;
 }
-// Funcion para agregar un nuevo producto al archivo
-void agregarProducto(FILE *x)
+
+void main_system()
 {
-    Producto new_product;
-    int is_loading = 1;
-    int max_num_rand = 100;
-    char temp_description[MAX_DESCRIPCION];
-    float temp_price;
-    int signal;
+    Register prime_numbers[MAX_PRIME];
+    Register prime_loaded[MAX_PRIME];
+    int new_number;
+    int index_writed = 0;
+    char *path_binari = "./estructura_db/practice_c/_files/binari_primes.dat";
+    char *path_binari_sorted = "./estructura_db/practice_c/_files/binari_primes_sorted.dat";
 
-    printf( "Ingrese 0 para dejar de agregar prodcutos; sino ingrese cualquier tecla \n" );
-    scanf( " %d", &is_loading );
-    fflush( stdin );
-
-    while ( is_loading )
-    {
-        srand( time(NULL) );
-        new_product.codigo = rand() % max_num_rand;
-        fflush( stdin );
-
-        printf( "Enter the description of product: \n" );
-        scanf( " %s", temp_description );
-        strcpy( new_product.descripcion, temp_description );
-        fflush( stdin );
-
-        printf( "Enter the price of product: \n" );
-        scanf( " %f", &temp_price );
-        new_product.precio = temp_price;
-        fflush( stdin );
-
-        new_product.signal = 1;
+    init_register( prime_numbers );
     
-        fseek( x, 0L, SEEK_END);
-        fwrite( &new_product, sizeof(new_product), 1, x );
-
-        printf( "Ingrese 0 para dejar de agregar prodcutos; sino ingrese cualquier tecla \n" );
-        scanf( " %d", &is_loading );
-        fflush( stdin );
-    }
-}
-
-// Funcion para eliminar un producto del archivo fisicamente
-//void eliminarProducto(FILE *archivo)
-//{
-//
-//}
-
-// Funcion para modificar un producto del archivo
-void modificarProducto(FILE *x)
-{
-    Producto find_product;
-    int temp_code;
-    int modication_option;
-    char new_description[MAX_DESCRIPCION] = "0";
-    float new_price = 0;
-
-    printf( "Ingrese el codigo del producto que quiera modificar: \n" );
-    scanf( " %d",&temp_code );
-
-    fread( &find_product, sizeof(find_product), 1, x );
-    
-    while( !feof(x) )
-    {
-        if( find_product.codigo == temp_code  ) break;
-        fread( &find_product, sizeof( find_product ), 1, x);
-    }
-
-    printf( "Enter the new description; 0 for no chage \n" );
-    scanf( " %s", new_description );
-    fflush( stdin );
-
-    printf( "Enter the new price; 0 for no chage \n" );
-    scanf( " %f", &new_price );
-    fflush( stdin );
-
-    if( strcmp( new_description, "0" ) != 0 ) strcpy( find_product.descripcion, new_description );
-    if( new_price != 0 ) find_product.precio = new_price;
-
-    fseek( x, -sizeof(find_product), SEEK_CUR );
-    fwrite( &find_product, sizeof(find_product), 1, x );
-}
-
-// Funcion para Eliminar logicamente  un producto del archivo
-void EliminaLogiamente(FILE *x)
-{
-    Producto delete_product;
-    int temp_code;
-
-    printf( "Ingrese el codigo del producto que eliminar: \n" );
-    scanf( " %d",&temp_code );
-
-    fread( &delete_product, sizeof(delete_product), 1, x );
-    
-    while( !feof(x) )
-    {
-        if( delete_product.codigo == temp_code  ) break;
-        fread( &delete_product, sizeof( delete_product ), 1, x);
-    }
-
-    delete_product.signal = 0;
-    
-    fseek( x, -sizeof(delete_product), SEEK_CUR );
-    fwrite( &delete_product, sizeof(delete_product), 1, x );
-}
-
-// Funci�n para listar todos los productos del archivo
-void listarProductos(FILE *x, char *msj)
-{
-    Producto current_product;
-
-    fread( &current_product, sizeof( current_product ), 1, x);
-
-    while( !feof(x) )
-    {
-        printf( "%d-%s %.2f %d \n", current_product.codigo, current_product.descripcion, current_product.precio, current_product.signal );
-        fread( &current_product, sizeof( current_product ), 1, x);
-    }
-}
-
-int error(char *x)
-{
-    fprintf(stderr, "no se puede abrir el archivo %s", x);
-    return (1);
-}
-
-void tecla(void)
-{
-    p("\n\nPRESIONE CUALQUIER TECLA PARA VOLVER AL MENU PRINCIPAL!!!");
-    //getch();
-}
-void linea(int x)
-{
-    int i;
-    // p("\n");
-    for (i = 1; i < x; i++)
-        p("*");
-    p("\n");
-}
-
-int menprin(void)
-{
-    int op;
     do
     {
-        //system("cls");
-        printf("\n\t\t\t\t*****MENU PRINCIPAL DE PRODUCTOS *****\n\n");
-        p("\n\n\t\t\t \t - Agregar producto                 \t <1>\n");
-        p("\n\n\t\t\t \t - Eliminar Fisicamente un producto \t <2>\n");
-        p("\n\n\t\t\t \t - Modificar producto               \t <3>\n");
-        p("\n\n\t\t\t \t - Listar productos                 \t <4>\n");
-        p("\n\n\t\t\t \t - Eliminar Logicamente             \t <5>\n");
-        p("\n\n\t\t\t \t - Salir                            \t <6>\n");
-        p("\n\n\n\t\t\t INGRESE OPCION: ");
-        s("%d", &op);
-    } while (op < 1 || op > 6);
-    return (op);
-} // CIERRA MENU
+        new_number = generate_random_number();
 
-int verifica(FILE *x, char *y)
-{
-    int v;
-    if ((x = fopen(y, "rb+")) == NULL)
-        v = 0;
-    else
-        v = 1;
-    return v;
+        fill_unique_primes( prime_numbers, new_number, &index_writed );
+    }while( index_writed <= 20 );
+    printr( prime_numbers );
+
+    write_file( prime_numbers, path_binari );
+    printb();
+
+    load_binari( prime_loaded );
+    printr( prime_loaded );
+
+    sort_primes( prime_loaded );
+    write_file( prime_loaded, path_binari_sorted );
 }
 
-// Función para eliminar un producto del archivo
-//void eliminarProductoFisicamente(FILE *archivo)
-//{
-//
-//}
+void init_register( Register init_prime_numbers[MAX_PRIME] )
+{
+    for( int i = 0; i < MAX_PRIME; i++ )
+    {
+        init_prime_numbers->index =         i+1;
+        init_prime_numbers->prime_number =  0;
+    }
+}
+
+int generate_random_number()
+{
+    int temp_random_number;
+    bool prime;
+
+    srand( time(NULL) );
+
+    do
+    {
+        temp_random_number = rand() % 200;
+
+        prime = is_prime( temp_random_number );
+    } while( !prime );
+
+    return temp_random_number;
+}
+
+int is_prime( int random_number )
+{
+    if( random_number <= 1 )
+    {
+        return false;
+    }
+
+    for( int i = 2; i * i <= random_number; i++)
+    {
+        if ( random_number % i == 0 )
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void fill_unique_primes( Register prime_array[MAX_PRIME], int value_prime, int* index )
+{
+    if( !is_repeat( prime_array, value_prime ) )
+    {
+        prime_array[(*index)].prime_number =    value_prime;
+        prime_array[(*index)].index =           (*index);
+        (*index)++;
+    }
+}
+
+bool is_repeat( Register check_primes[MAX_PRIME], int prime )
+{
+    for( int i = 0; i < MAX_PRIME; i++ )
+    {
+        if( check_primes[i].prime_number == prime ) return true;
+    }
+    
+    return false;
+}
+
+void printr( Register data[MAX_PRIME] )
+{
+    printf( "\t INDEX \t | \t PRIME \n" );
+
+    for( int i = 0; i < MAX_PRIME; i++ )
+    {
+        printf( "\t %d \t - \t %d \n", data[i].index, data[i].prime_number );
+    }
+}
+
+void write_file( Register write_primes[MAX_PRIME], char* path_file )
+{
+    FILE *file;
+
+    file = fopen( path_file, "wb+" );
+
+    fseek( file, 0L, SEEK_END );
+    fwrite( write_primes, sizeof(write_primes), MAX_PRIME, file );
+
+    fclose(file);
+}
+
+void printb()
+{
+    Register data_file;
+    FILE *file;
+    char *path = "./estructura_db/practice_c/_files/binari_primes.dat";
+
+    file = fopen( path, "rb+" );
+
+    printf( "\t INDEX \t | \t PRIME \n" );
+    fseek( file, 0L, SEEK_SET );
+    fread( &data_file, sizeof(data_file), 1, file );
+
+    while( !feof(file) )
+    {
+        printf( "\t %d \t - \t %d \n", data_file.index, data_file.prime_number );
+        fread( &data_file, sizeof(data_file), 1, file );
+    }
+
+    fclose(file);
+}
+
+void load_binari( Register data_binari[MAX_PRIME] )
+{
+    FILE *file;
+    char *path = "./estructura_db/practice_c/_files/binari_primes.dat";
+
+    file = fopen( path, "rb+" );
+
+    fseek( file, 0L, SEEK_SET );
+    fread( data_binari, sizeof(data_binari), MAX_PRIME, file );
+
+    fclose(file);
+}
+
+// BOGOSORT!!!
+void sort_primes( Register prime_loaded[MAX_PRIME] )
+{
+    Register temp_register;
+    bool is_sorted = true;
+
+    do
+    {
+        for( int i=0; i < MAX_PRIME; i++ )
+        {
+            int index_rand = rand() % MAX_PRIME;
+
+            temp_register = prime_loaded[i];
+            prime_loaded[i] = prime_loaded[index_rand];
+            prime_loaded[index_rand] = temp_register;
+        }
+
+        for ( int j = 0; j < MAX_PRIME; j++)
+        {
+            if( prime_loaded[j].prime_number > prime_loaded[j+1].prime_number )
+            {
+                is_sorted = false;
+                break;
+            }
+        }
+    
+    print_bogosort( prime_loaded );
+
+    }while( !is_sorted );
+}
+
+void print_bogosort( Register data[MAX_PRIME] )
+{
+    system("clear");
+    for( int i = 0; i < MAX_PRIME; i++)
+    {
+        printf("%d", i);
+        for( int j = 0; j < data[i].prime_number; j++)
+        {
+            printf("-");
+        }
+        printf("\n");
+    }
+    printf("#########################################################################################\n");
+    system("sleep 1");
+}

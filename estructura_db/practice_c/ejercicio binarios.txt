@@ -1,0 +1,17 @@
+Dado un lote de numeros generados al azar entre 1 y 200 ,se necesitan generar 20 numeros primos
+al llegar a ese limite de 20 se debera frenar esa generacion .
+Al momento que vamos genrando los numeros primos ,los vamos guardanado en un archivo binario, para luego mostrar 
+la generacion de 2 archivos .
+Los numeros primos generados no pueden repetirse en el archivo .
+Luego  generar un archivo binario ordenado utilizando el siguiente struct 
+
+typedef struct 
+{ int cod;
+  int np;                      
+ } registro;
+
+ej  1-17      	5-11
+    2-47		    1-17
+    3-53		    4-19
+    4-19        2-47
+    5-11        3-53
