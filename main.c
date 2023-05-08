@@ -1,231 +1,100 @@
+/*
+Hacer un programa que pida al usuario la cantidad de elementos que necesita almeacenar, para ello realizqar la funcion cargar
+luego mostrar el vector pasandole el titulo vector desordenado. Luego ordenar ese vector y mostrarlo con el titulo vetor ordenado,
+por ultimo liberar el espacio de memoria.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <string.h>
-#include <stdbool.h>
 
-#define MAX_PRIME 20
+#define MAX_VALUE_RAND 100
 
-typedef struct 
-{ 
-    int index;
-    int prime_number;
-} Register;
-
-void init_register( Register[] );
-int generate_random_number();
-int is_prime( int );
-bool is_repeat( Register[], int );
-void fill_unique_primes( Register[], int, int* );
-void write_file_binary( Register[], int );
-void main_system();
-void printr( Register[] );
-void write_file( Register[], char* );
-void printb();
-void load_binari( Register[] );
-// BOGOSORT!!!
-void sort_primes( Register[] );
-void print_bogosort( Register[] );
+void load_data( int*, int );
+void print_r( int*, int );
+void order_data( int*, int );
 
 int main()
 {
-    main_system();
+    int *memory;
+    int size_array;
 
+    /*  
+        La creacion de la memoria dinamica se debe hacer en main
+        Si se queire hacer en una funcion aparte se debera utilizar un puntero a funcion
+    */
+    /*----------------------------------------------ASIGNACION-MEMORIA-DINAMICA---------------------------------------------------*/
+    printf( "Enter the amount of element for array: \n" );
+    scanf( " %d", &size_array );
+    fflush( stdin );
+
+    memory = (int*)calloc( size_array, sizeof(int) );
+    /*----------------------------------------------------------------------------------------------------------------------------*/
+
+    load_data( memory, size_array );
+
+    print_r( memory, size_array );
+
+    printf( "\n\n" );
+
+    order_data( memory, size_array );
+
+    free( memory );
     return 0;
 }
 
-void main_system()
+void load_data( int *data_array, int size )
 {
-    Register prime_numbers[MAX_PRIME];
-    Register prime_loaded[MAX_PRIME];
-    int new_number;
-    int index_writed = 0;
-    char *path_binari = "./estructura_db/practice_c/_files/binari_primes.dat";
-    char *path_binari_sorted = "./estructura_db/practice_c/_files/binari_primes_sorted.dat";
+    int temp_rand;
 
-    init_register( prime_numbers );
-    
-    do
+    srand(time(NULL));
+
+    for( int i = 0; i < size; i++ )
     {
-        new_number = generate_random_number();
+        temp_rand = rand() % MAX_VALUE_RAND;
 
-        fill_unique_primes( prime_numbers, new_number, &index_writed );
-    }while( index_writed <= 20 );
-    printr( prime_numbers );
-
-    write_file( prime_numbers, path_binari );
-    printb();
-
-    load_binari( prime_loaded );
-    printr( prime_loaded );
-
-    sort_primes( prime_loaded );
-    write_file( prime_loaded, path_binari_sorted );
-}
-
-void init_register( Register init_prime_numbers[MAX_PRIME] )
-{
-    for( int i = 0; i < MAX_PRIME; i++ )
-    {
-        init_prime_numbers->index =         i+1;
-        init_prime_numbers->prime_number =  0;
+        *( data_array + i ) = temp_rand;
     }
 }
 
-int generate_random_number()
+void print_r( int *array_rand, int size )
 {
-    int temp_random_number;
-    bool prime;
-
-    srand( time(NULL) );
-
-    do
+    for ( int i = 0; i < size; i++ )
     {
-        temp_random_number = rand() % 200;
-
-        prime = is_prime( temp_random_number );
-    } while( !prime );
-
-    return temp_random_number;
+        printf( "%d \n", *array_rand++ );
+    }
 }
 
-int is_prime( int random_number )
+void order_data( int *order_array, int size )
 {
-    if( random_number <= 1 )
-    {
-        return false;
-    }
+    int temp_data;
 
-    for( int i = 2; i * i <= random_number; i++)
+    for( int i = 0; i < size; i++ )
     {
-        if ( random_number % i == 0 )
+        int temp_comp;
+
+        temp_comp = *( order_array + i ) - *( order_array + ( i+1 ) );
+
+        if( temp_comp < 0 )
         {
-            return false;
-        }
-    }
+            temp_data =                     *( order_array + i );
+            *( order_array + i ) =          *( order_array + ( i+1 ) );
+            *( order_array + ( i+1 ) ) =    temp_data;
 
-    return true;
-}
+            if( !i ) continue;
 
-void fill_unique_primes( Register prime_array[MAX_PRIME], int value_prime, int* index )
-{
-    if( !is_repeat( prime_array, value_prime ) )
-    {
-        prime_array[(*index)].prime_number =    value_prime;
-        prime_array[(*index)].index =           (*index);
-        (*index)++;
-    }
-}
-
-bool is_repeat( Register check_primes[MAX_PRIME], int prime )
-{
-    for( int i = 0; i < MAX_PRIME; i++ )
-    {
-        if( check_primes[i].prime_number == prime ) return true;
-    }
-    
-    return false;
-}
-
-void printr( Register data[MAX_PRIME] )
-{
-    printf( "\t INDEX \t | \t PRIME \n" );
-
-    for( int i = 0; i < MAX_PRIME; i++ )
-    {
-        printf( "\t %d \t - \t %d \n", data[i].index, data[i].prime_number );
-    }
-}
-
-void write_file( Register write_primes[MAX_PRIME], char* path_file )
-{
-    FILE *file;
-
-    file = fopen( path_file, "wb+" );
-
-    fseek( file, 0L, SEEK_END );
-    fwrite( write_primes, sizeof(write_primes), MAX_PRIME, file );
-
-    fclose(file);
-}
-
-void printb()
-{
-    Register data_file;
-    FILE *file;
-    char *path = "./estructura_db/practice_c/_files/binari_primes.dat";
-
-    file = fopen( path, "rb+" );
-
-    printf( "\t INDEX \t | \t PRIME \n" );
-    fseek( file, 0L, SEEK_SET );
-    fread( &data_file, sizeof(data_file), 1, file );
-
-    while( !feof(file) )
-    {
-        printf( "\t %d \t - \t %d \n", data_file.index, data_file.prime_number );
-        fread( &data_file, sizeof(data_file), 1, file );
-    }
-
-    fclose(file);
-}
-
-void load_binari( Register data_binari[MAX_PRIME] )
-{
-    FILE *file;
-    char *path = "./estructura_db/practice_c/_files/binari_primes.dat";
-
-    file = fopen( path, "rb+" );
-
-    fseek( file, 0L, SEEK_SET );
-    fread( data_binari, sizeof(data_binari), MAX_PRIME, file );
-
-    fclose(file);
-}
-
-// BOGOSORT!!!
-void sort_primes( Register prime_loaded[MAX_PRIME] )
-{
-    Register temp_register;
-    bool is_sorted = true;
-
-    do
-    {
-        for( int i=0; i < MAX_PRIME; i++ )
-        {
-            int index_rand = rand() % MAX_PRIME;
-
-            temp_register = prime_loaded[i];
-            prime_loaded[i] = prime_loaded[index_rand];
-            prime_loaded[index_rand] = temp_register;
-        }
-
-        for ( int j = 0; j < MAX_PRIME; j++)
-        {
-            if( prime_loaded[j].prime_number > prime_loaded[j+1].prime_number )
+            for( int j = i; j >= 0; j-- )
             {
-                is_sorted = false;
-                break;
+                temp_comp = *( order_array + j ) - *( order_array + ( j-1 ) );
+
+                if( temp_comp < 0 ) break;
+                
+                temp_data =                     *( order_array + j );
+                *( order_array + j ) =          *( order_array + ( j-1 ) );
+                *( order_array + ( j-1 ) ) =    temp_data;
             }
         }
-    
-    print_bogosort( prime_loaded );
-
-    }while( !is_sorted );
-}
-
-void print_bogosort( Register data[MAX_PRIME] )
-{
-    system("clear");
-    for( int i = 0; i < MAX_PRIME; i++)
-    {
-        printf("%d", i);
-        for( int j = 0; j < data[i].prime_number; j++)
-        {
-            printf("-");
-        }
-        printf("\n");
     }
-    printf("#########################################################################################\n");
-    system("sleep 1");
+
+    print_r( order_array, size );
 }
