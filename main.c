@@ -22,3 +22,19 @@
     14- ejecutar de nuevo 5 y 7
 */
 
+#include <stdio.h>
+
+int main()
+{
+    int a = 10;
+    int b = 20;
+    int *p;
+    int *q;
+
+    p = &a;
+
+    
+
+
+    return 0;
+}
