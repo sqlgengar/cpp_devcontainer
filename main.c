@@ -1,40 +1,44 @@
 /*
-    Ejercicios de punteros:
-    Realizar lo que se indica:
-    1-  declarar las variables enteras a y b asignar 10 a 'a' y 20 a 'b'
-    2-  declarar p y q como punteros a int
-    3-  asignar a p las direccion de a
-    4-  emitir el valor de a y su direccion
-    5-  emitir la direccion contenida en p, el valor contenido en la dirreccion contenida en p, y la direccion de p
-    6-  asigar a q la direccion de a
-    7-  emitir la direccion contenida en q, el valor contenido en la direccion contenida en q y la direccion de q
-    8-  sumarle 1 a la variable a usando el puntero p
-    9-  volver a ejecutar 5 y 7
-    10- copiar y ejecutar estas lineas:
-        if( p==q ) printf( "P y Q contienen el mismo valor \n" );
-        else printf( "P y Q contienen distinto valor \n" );
-
-        if( *p==*q ) printf( "Los contenidos apuntados desde P y Q son iguales \n" );
-        else printf( "Los contenidos apuntados desde P y Q son distintos \n" ); 
-    11- asignar a q la dereccion de b
-    12- modificar b mediante q que valga 11
-    13- ejecutar de nuevo 10
-    14- ejecutar de nuevo 5 y 7
+    Realizar un programa que dada la captura de la cadena, y determinar lo siguiente.
+    A) El largo de la cadena, realizando una funcion llamada cuenta_caracteres.
+    B) La cantidad de palabras ingresadas, realizando una funcion llamada cuenta_pal.
+    C) La cantidad de letras y numeros que posee ese texto realizando una funcion llamada cuenta_letras.
+    D) Convertir la cadena ingresada en mayusculas en manteniendo la original, realizando una funcion llamada mayu.
+    E) Mostrar la cadena invertida(recursividad).
+    G) Dada una vocal determinada indicar la cantidad de apariciones en el texto en una funcion llamada cantidad_vocal.
 */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_CHAR 80
+
+void count_length( char[MAX_CHAR] );
+void count_word( char[MAX_CHAR] );
 
 int main()
 {
-    int a = 10;
-    int b = 20;
-    int *p;
-    int *q;
+    char text[MAX_CHAR];
 
-    p = &a;
+    printf( "Enter a text: \n" );
+    fgets( text, MAX_CHAR, stdin );
 
-    
-
+    count_length( text );
 
     return 0;
 }
+
+void count_length( char current_text[MAX_CHAR] )
+{
+    int temp_count = 0;
+
+    while( *current_text != '\0' )
+    {
+        temp_count++;
+        current_text++;
+    }
+
+    printf( "The lenght of string is: %d \n", temp_count );
+}
+
