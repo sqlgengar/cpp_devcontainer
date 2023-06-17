@@ -159,7 +159,9 @@ void ingresar(FILE *cl,FILE*ar)
             {
                 rewind( ar );
 
-                fread( &temp_registro_articulo, sizeof(temp_registro_articulo) * temp_cod_articulo , 1, ar );
+				fseek( ar, sizeof(temp_registro_articulo) * ( temp_cod_articulo - 1 ), SEEK_CUR );
+
+                fread( &temp_registro_articulo, sizeof(temp_registro_articulo), 1, ar );
 
                 printf( "Ingrese la cantidad de %s \n", temp_registro_articulo.nom_art );
                 scanf( " %d", &temp_discount_stock );
