@@ -1,0 +1,2 @@
+alejandro;montevideo 333;masculino;-200.00
+micaela;garibaldi 3320;femenino;2.00
