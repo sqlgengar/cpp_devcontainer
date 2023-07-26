@@ -166,7 +166,6 @@ void formatter( Employees data[MAX_EMPLOYEES], char data_formated[MAX_BUFF_CHARS
 
         sprintf( temp_string, "%d", data[i].years );
         strcat( data_formated, temp_string );
-        strcat( data_formated, ";" );
         strcpy( temp_string, "" );
 
         strcat( data_formated, "\n" );
