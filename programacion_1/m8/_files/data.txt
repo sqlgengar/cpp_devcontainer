@@ -1,2 +1,10 @@
-50 1 2 1.500000
-44 22 33 27.500000
+Registro #1
+Legajo: 20
+Nombre: aleeee
+Edad: 27
+
+Registro #2
+Legajo: 9
+Nombre: eliiii
+Edad: 28
+

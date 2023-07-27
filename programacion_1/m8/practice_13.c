@@ -86,7 +86,7 @@ void get_data( Customers data[MAX_CUSTOMERS], FILE* stream )
     char* delimiter =               ";";
     int count_lines =               0;
 
-    while( fgets( buff, MAX_BUFF_STRING, stream ) )
+    while( fgets( buff, MAX_BUFF_STRING, stream ) != NULL )
     {
         token = strtok( buff, delimiter );
         if( token == NULL ) break;
