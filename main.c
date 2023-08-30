@@ -1,117 +1,73 @@
 #include <stdio.h>
+//#include <conio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include<math.h>
 
-typedef struct nodo
-{
-    int number;
-    struct nodo* last;
-} nodo;
+void mostrar_binario(FILE *);
+void mostrar_mensaje(FILE *);
+void Convierte_a_Letra(char[]);
+int error(char *);
+void pausa(void);
 
-nodo* create_node();
-void show_menu();
-void resolve_option( int, nodo* );
-void add_node( nodo** );
-void printer( nodo* );
-void delete_node( nodo** );
-
-int main()
-{
-    show_menu();
-    return 0;
+int main(){
+    FILE *archivo;
+    char nom1[80] = "textoBinario.txt", cad[81]; // nombre físico del archivo
+    system("cls");
+    if ((archivo = fopen(nom1, "r")) == NULL)
+        exit(error(nom1)); // crea el archivo para escritura y lectura;
+    printf("\n El archivo %s se ha abierto satisfactoriamente", nom1);
+    printf("\n Presione una tecla para visualizar el contenido del archivo:%s\n\n", nom1);
+    pausa();
+    system("cls");
+    rewind(archivo);
+    printf("\n El contenido del archivo %s es:\n\n", nom1);
+    mostrar_binario(archivo);
+    pausa();
+    rewind(archivo);
+    printf("\nMOSTRAMOS EL MENSAJE\n\n");
+    mostrar_mensaje(archivo);
+    printf("\n\n");
+    pausa();
+    fclose(archivo);
+    return (0);
 }
 
-nodo* create_node()
+void mostrar_binario( FILE *x )
 {
-    int temp_number;
-    nodo *temp_pila;
-    
-    temp_pila = ( nodo* )malloc( sizeof( nodo ) );
+    char line[81];
 
-    printf( "Ingrese un numero: \n " );
-
-    scanf( " %d", &temp_number );
-
-    temp_pila->number = temp_number;
-    temp_pila->last =   NULL;
-
-    return temp_pila;
-}
-
-void show_menu()
-{
-    int temp_option =   0;
-    nodo *pila =        NULL;
-    pila =              create_node();
-
-    while( true )
+    while( fgets( line, sizeof(line), x ) != NULL )
     {
-        printf( "1) Agregar nodo a la pila \n" );
-        printf( "2) Eliminar nodo a la pila \n" );
-        printf( "3) Salir \n" );
-        printf( "4) mostrar \n" );
-
-        scanf( " %d", &temp_option );
-
-        if( temp_option == 3 ) exit( EXIT_SUCCESS );
-
-        resolve_option( temp_option, pila );
+        printf( "%s", line );
     }
 }
 
-void resolve_option( int option, nodo* pila )
+void mostrar_mensaje( FILE *x )
 {
-    switch( option )
+    char line[81];
+    int temp_max_chars = 0;
+
+    while( fgets( line, sizeof(line), x ) != NULL )
     {
-        case 1:
-            add_node( &pila );
-        break;
-        case 2:
-            delete_node( &pila );
-        break;
-        case 4:
-            printer( pila );
-        break;
+        temp_max_chars = strcspn( line, "\n" );
+        line[ temp_max_chars ] = '\0';
+        Convierte_a_Letra( line );
     }
 }
 
-void add_node( nodo** pila )
+void Convierte_a_Letra(char x[])
 {
-    nodo *new_data =    NULL;
-    new_data =          create_node();
-
-    nodo* temp = *pila;
-    while( temp->last != NULL )
-    {
-            temp = temp->last;
-    }
-    temp->last = new_data;
+    char c = strtol( x, 0, 2 );
+    printf( "%c", c );
 }
 
-void printer( nodo* data_pila )
-{
-    nodo* aux = data_pila;
-
-    while( aux != NULL )
-    {
-        printf( "Number: %d, Address of last: %p \n", aux->number, (void*)aux->last );
-        aux = aux->last;
-    }
+int error(char *x){
+    fprintf(stderr, "No se pudo abrir el archivo %s", x);
+    return (1);
 }
 
-void delete_node( nodo** pila )
-{
-    nodo data;
-    nodo *aux;
-
-    aux =   *pila;
-    /*data =  **pila;*/
-    *pila = (*pila)->last;
-
-    /*printf( "data %d \n", data.number );*/
-    /*printf( "aux %d \n", aux->number );*/
-
-    free( aux );
-
-    
+void pausa(){
+    printf("\n>>> Presione Enter para continuar...\n");
+    fflush(stdin);
+    while (getchar() != '\n');
 }
