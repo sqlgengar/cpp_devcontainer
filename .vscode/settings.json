@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "iomanip": "c"
     },
     "editor.fontFamily": "'FiraMono Nerd Font',Consolas, 'Courier New', monospace"
 }
