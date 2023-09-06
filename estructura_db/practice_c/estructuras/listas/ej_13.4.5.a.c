@@ -1,6 +1,7 @@
 /*
 
-ando el tipo definido en el ejercicio 5a, modifique el programa 13.9 para enlistar los nombres y números telefónicos en orden inverso.
+ Una lista con vinculación doble es una lista en la que cada estructura contiene
+un apuntador tanto a la estructura siguiente como a la anterior en la lista. Defina un tipo apropiado para una lista con doble vinculación de nombres y números telefónicos.
 
 */
 
@@ -24,10 +25,8 @@ int main()
   TeleType t4 = {"Perez, Alejandro","(555) 321-9876"};
   TeleType t5 = {"Gonzalez , Maria","(555) 789-6543"};
   TeleType *first;
-  TeleType *last;
 
   first = &t1;
-  last = &t5;
 
   t1.lastaddr = NULL;
   t1.nextaddr = &t2;
@@ -44,7 +43,7 @@ int main()
   t5.lastaddr = &t4;
   t5.nextaddr = NULL;
 
-  display(last);
+  display(first);
   return 0;
 }
 
@@ -54,7 +53,7 @@ void display( TeleType *contents )
   {
     printf( "%s %s \n", contents->name, contents->phoneNo );
 
-    contents = contents->lastaddr;
+    contents = contents->nextaddr;
   }
   
   printf( "\n" );
