@@ -1,145 +1,142 @@
 /*
 
- Escriba una función en C++ llamada eliminar() que elimina una estructura existente de la lista de estructuras vinculadas creada por el programa 13.11. El algoritmo
-para eliminar una estructura vinculada deberá seguir la secuencia desarrollada para
-eliminar una estructura desarrollada en el ejercicio 4 en la sección 13.4. El argumento transmitido a eliminar() deberá ser la dirección de la estructura que precede
-al registro que se eliminará. En la función de eliminación, asegúrese que el valor
-del apuntador en la estructura eliminada reemplaza al valor del miembro apuntador
-de la estructura precedente antes que se elimine la estructura.
+Pila - Desarrollar un menu de operaciones basicas junto con pila ordenada.
 
 */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-#define MAXRECS 3
-#define MAX_CHARS 500
+typedef struct nodo{
+  int number;
+  struct nodo * preview;
+}nodo;
 
-typedef struct TeleType
-{
-  char name[MAX_CHARS];
-  char phoneNo[MAX_CHARS];
-  struct TeleType *nextaddr;
-} TeleType;
+void execute();
+void show_menu();
+void resolve_option( int );
+nodo* create_stack();
+void add_element( nodo** );
+void show_stack( nodo* );
 
-void check_memory( TeleType* );
-void populate( TeleType* );
-void display( TeleType* );
-void reassign_address( TeleType* );
-void eliminar( TeleType* );
+
 
 int main()
 {
-  TeleType *list = NULL;
-  TeleType *current = NULL;
-
-  list = ( TeleType* )malloc( sizeof( TeleType ) );
-  check_memory( list );
-  current = list;
-
-  for( int i = 0; i < MAXRECS - 1; i++ )
-  {
-    populate( current );
-    current->nextaddr = ( TeleType* )malloc( sizeof( TeleType ) );
-    check_memory( current->nextaddr );
-    current = current->nextaddr;
-  }
-
-  populate( current );
-  current->nextaddr = NULL;
-
-  printf( "\nThe  list  consists  of  the  following  records:\n" );
-  display( list );
-
-  reassign_address( list );
-  display( list );
-
-  free(list);
-  free(current);
-
+  execute();
   return 0;
 }
 
-void check_memory( TeleType* pointer_list )
+void execute()
 {
-  if( pointer_list == NULL )
+  while( true )
   {
-    printf( "memory not available\n" );
-    free( pointer_list );
-    exit( EXIT_FAILURE );
+    show_menu();
   }
-}
-
-void populate( TeleType* record )
-{
-  printf( "Enter a name:\n" );
-  scanf( " %s", &record->name );
-  fflush( stdin );
-
-  printf( "Enter  the  phone  number:\n" );
-  scanf( " %s", &record->phoneNo );
-  fflush( stdin );
 
   return;
 }
 
-void display( TeleType* contents )
+void show_menu()
 {
-  while( contents != NULL )
-  {
-    printf( "%s %s \n", contents->name, contents->phoneNo );
+  int temp_option = -1;
+  printf("\n\n");
+  printf( "Ingrese el numero de opcion:      \n" );
+  printf( "Crear pila:                    (1)\n" );
+  printf( "Agregar elemento a la pila:    (2)\n" );
+  printf( "Sacar elemento de la pila:     (3)\n" );
+  printf( "Listar pila:                   (4)\n" );
+  printf( "Ordenar pila:                  (5)\n" );
+  printf( "Eliminar la pila:              (6)\n" );
+  printf( "Salir:                         (7)\n" );
+  printf("\n\n");
 
-    contents = contents->nextaddr;
-  }
+  scanf( " %d", &temp_option );
+  fflush( stdin );
 
-  printf( "\n" );
+  resolve_option( temp_option );
 
   return;
 }
 
-void reassign_address( TeleType* list )
+void resolve_option( int option )
 {
-  int temp_index = -1;
-  TeleType* init_list = list;
-  TeleType* next_node = NULL;
-  TeleType* temp_list = list;
-  TeleType* delete_node = NULL;
+  nodo* stack;
 
-  printf( "Enter the element to delete:\n" );
-  scanf( " %d", &temp_index );
-  fflush( stdin );
-
-  for( int i = 1; i <= MAXRECS; i++ )
+  switch( option )
   {
-    if( i == temp_index )
-    {
-      next_node = temp_list->nextaddr;
-      break;
+    case 1:
+      stack = create_stack();
+    break;
+    case 2:
+      add_element( &stack );
+    break;
+    case 3:
+      //delete_element();
+    break;
+    case 4:
+      show_stack( stack );
+    break;
+    case 5:
+      //sort_stack();
+    break;
+    case 6:
+      //delete_stack();
+    break;
+    case 7:
+      //nos_re_vimos();
+    break;
+  }
+
+  return;
+}
+
+nodo* create_stack()
+{
+  nodo* temp_stack = NULL;
+  printf("Se creo la pila %x\n",temp_stack);
+
+  return temp_stack;
+}
+
+void add_element( nodo** stack )
+{
+  int temp_number = 0;
+  nodo* little_stack = NULL;
+
+  // Crear nodo que genera espacio de memoria
+  little_stack = ( nodo* )malloc( sizeof( nodo ) );
+  
+  // Cargar datos de nodo
+  printf( "Ingrese valor:\n" );
+  scanf( " %d", &temp_number );
+  fflush( stdin );
+  little_stack->number = temp_number;
+  little_stack->preview = NULL;
+    
+  // Reasigna direccion - apilar
+  little_stack->preview = *stack;
+  *stack = little_stack;
+  printf(" Se creo el nodo %x y valor de memoria %d \n", little_stack, little_stack->number );
+
+  return;
+}
+
+//mostrar lista de pila
+void show_stack(nodo* top) {
+   //verifica si esta vacia
+    /*
+    if (isEmpty(top)) {
+        printf("La pila está vacía.\n");
+        return;
+    }*/
+    //muestra pila
+    nodo* current = top;
+    printf("Contenido de la pila:\n");
+    while (current != NULL) {
+        printf(" test \n");
+        printf("%d\n", current->number);
+        current = current->preview;
     }
-
-    temp_list = temp_list->nextaddr;
-  }
-
-  for( int j = 1; j <= MAXRECS; j++ )
-  {
-    if( j == temp_index - 1 )
-    {
-      delete_node = list->nextaddr;
-      list->nextaddr = next_node;
-      break;
-    }
-
-    list = list->nextaddr;
-  }
-
-  list = init_list;
-
-  eliminar( delete_node );
-
-  return;
-}
-
-void eliminar( TeleType* address_kill )
-{
-  free( address_kill );
 }
