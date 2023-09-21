@@ -76,10 +76,10 @@ Stack* resolve_option( int option, Stack* stack )
       stack = create_stack();
     break;
     case 2:
-      stack = push(stack);
+      stack = push( stack );
     break;
     case 3:
-      stack = pop(stack);
+      stack = pop( stack );
     break;
     case 4:
       stack = show_stack( stack );
