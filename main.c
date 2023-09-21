@@ -8,19 +8,26 @@ Pila - Desarrollar un menu de operaciones basicas junto con pila ordenada.
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef struct nodo{
+typedef struct data
+{
   int number;
-  struct nodo * preview;
-}nodo;
+  struct data* preview;
+} Node;
+
+typedef struct
+{
+  Node* top;
+} Stack;
 
 void execute();
-void show_menu();
-void resolve_option( int );
-nodo* create_stack();
-void add_element( nodo** );
-void show_stack( nodo* );
-
-
+Stack* show_menu( Stack* );
+Stack* resolve_option( int, Stack* );
+Stack* create_stack();
+Stack* push( Stack* );
+Stack* pop( Stack* );
+bool is_empty( Stack* );
+Stack* show_stack( Stack* );
+Stack* sort_stack( Stack* );
 
 int main()
 {
@@ -30,17 +37,20 @@ int main()
 
 void execute()
 {
+  Stack* stack = NULL;
+
   while( true )
   {
-    show_menu();
+    stack = show_menu( stack );
   }
 
   return;
 }
 
-void show_menu()
+Stack* show_menu( Stack* stack )
 {
   int temp_option = -1;
+
   printf("\n\n");
   printf( "Ingrese el numero de opcion:      \n" );
   printf( "Crear pila:                    (1)\n" );
@@ -55,31 +65,27 @@ void show_menu()
   scanf( " %d", &temp_option );
   fflush( stdin );
 
-  resolve_option( temp_option );
-
-  return;
+  return resolve_option( temp_option, stack );
 }
 
-void resolve_option( int option )
+Stack* resolve_option( int option, Stack* stack )
 {
-  nodo* stack;
-
   switch( option )
   {
     case 1:
       stack = create_stack();
     break;
     case 2:
-      add_element( &stack );
+      stack = push( stack );
     break;
     case 3:
-      //delete_element();
+      stack = pop( stack );
     break;
     case 4:
-      show_stack( stack );
+      stack = show_stack( stack );
     break;
     case 5:
-      //sort_stack();
+      stack = sort_stack( stack );
     break;
     case 6:
       //delete_stack();
@@ -89,54 +95,106 @@ void resolve_option( int option )
     break;
   }
 
-  return;
+  return stack;
 }
 
-nodo* create_stack()
+Stack* create_stack()
 {
-  nodo* temp_stack = NULL;
-  printf("Se creo la pila %x\n",temp_stack);
+  Stack* temp_stack = ( Stack* )malloc( sizeof( Stack ) );
+  temp_stack->top =   NULL;
+  
+  printf("Se creo la pila %p\n", (void*)temp_stack);
 
   return temp_stack;
 }
 
-void add_element( nodo** stack )
+Stack* push( Stack* stack )
 {
-  int temp_number = 0;
-  nodo* little_stack = NULL;
+  int temp_number =     0;
+  Node* little_stack =  NULL;
 
   // Crear nodo que genera espacio de memoria
-  little_stack = ( nodo* )malloc( sizeof( nodo ) );
+  little_stack = ( Node* )malloc( sizeof( Node ) );
   
   // Cargar datos de nodo
   printf( "Ingrese valor:\n" );
   scanf( " %d", &temp_number );
   fflush( stdin );
-  little_stack->number = temp_number;
-  little_stack->preview = NULL;
+  little_stack->number =  temp_number;
     
   // Reasigna direccion - apilar
-  little_stack->preview = *stack;
-  *stack = little_stack;
-  printf(" Se creo el nodo %x y valor de memoria %d \n", little_stack, little_stack->number );
+  little_stack->preview = stack->top;
+  stack->top =            little_stack;
+  printf( "Se creo el nodo %p y valor de memoria %d \n", (void*)little_stack, little_stack->number );
 
-  return;
+  return stack;
 }
 
-//mostrar lista de pila
-void show_stack(nodo* top) {
-   //verifica si esta vacia
-    /*
-    if (isEmpty(top)) {
-        printf("La pila está vacía.\n");
-        return;
-    }*/
-    //muestra pila
-    nodo* current = top;
-    printf("Contenido de la pila:\n");
-    while (current != NULL) {
-        printf(" test \n");
-        printf("%d\n", current->number);
-        current = current->preview;
+Stack* pop( Stack* stack )
+{
+  int value_erase;
+  Node* memory_erase;
+
+  if( is_empty( stack ) ) return stack;
+
+  Node* temp =    stack->top;
+  value_erase =   temp->number;
+  memory_erase =  temp;
+  stack->top =    temp->preview;
+  free( temp );
+
+  printf( "Se borro el nodo %p y valor de memoria %d \n", (void*)memory_erase, value_erase );
+
+  return stack;
+}
+
+bool is_empty( Stack* stack )
+{
+  if( stack->top != NULL ) return false;
+
+  printf( "Pila vacia \n" );
+  return true;
+}
+
+Stack* show_stack( Stack* stack )
+{
+  if( is_empty( stack ) ) return stack;
+
+  Node* current = stack->top;
+  
+  printf( "Contenido de la pila: \n" );
+
+  while( current != NULL )
+  {
+      printf( "%d \n", current->number );
+      current = current->preview;
+  }
+
+  return stack;
+}
+
+Stack* sort_stack( Stack* stack )
+{
+  Stack* sorted_stack = create_stack();
+
+  while( !is_empty( stack ) )
+  {
+    int current = pop(stack)->number;
+
+    while( !is_empty(sorted_stack) && sorted_stack->top->number > current )
+    {
+      push(stack)->number = pop(sorted_stack)->number;
     }
+
+    push(sorted_stack)->number = current;
+  }
+
+  while( !is_empty( sorted_stack ) )
+  {
+    push(stack)->number = pop(sorted_stack)->number;
+  }
+
+  printf( "Pila ordenada\n" );
+
+  return stack;
 }
