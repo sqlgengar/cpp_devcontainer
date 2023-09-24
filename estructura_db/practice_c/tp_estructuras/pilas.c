@@ -238,10 +238,7 @@ Stack* sort_stack( Stack* stack )
 
 int get_top_value( Stack* stack, bool is_verbose )
 {
-  if( is_empty( stack, is_verbose ) )
-  {
-    return 0;
-  }
+  if( is_empty( stack, is_verbose ) ) return 0;
   
   return stack->top->number;
 }
