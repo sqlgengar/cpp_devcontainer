@@ -123,7 +123,7 @@ Stack* create_stack( bool is_verbose )
 /**
  *  push va a contar con un valor auxiliar que se le puede pasar a la funcion.
  *  esto es para distinguir el caso de uso frente a una usuario que ingresa valores 
- *  y cuando el progrma lo utiliza para funciones internas.
+ *  y cuando el programa lo utiliza para funciones internas.
 **/
 Stack* push( Stack* stack, int aux_value, bool is_verbose )
 {
@@ -141,6 +141,7 @@ Stack* push( Stack* stack, int aux_value, bool is_verbose )
     fflush( stdin );
   }
 
+  // Cargar dato en el nuevo nodo
   little_stack->number =  temp_number;
     
   // Reasigna direccion - apilar
@@ -159,9 +160,14 @@ Stack* pop( Stack* stack, bool is_verbose )
 
   if( is_empty( stack, is_verbose ) ) return stack;
 
+  // Crear nodo temporarl para operaciones
   Node* temp =    stack->top;
+
+  // Gaurdar datos con los que se van a trabajar para debuggin
   value_erase =   get_top_value( stack, is_verbose );
   memory_erase =  temp;
+
+  // Reasignar memoria
   stack->top =    temp->preview;
   free( temp );
 
