@@ -26,7 +26,7 @@ Queue* enqueue( Queue*, int, bool );
 Queue* dequeue( Queue*, bool );
 bool is_empty( Queue*, bool );
 Queue* show_queue( Queue* );
-Queue* sort_queue( Queue* );
+Queue* invert_queue( Queue* );
 int get_front_value( Queue*, bool );
 Queue* delete_queue( Queue* );
 
@@ -56,7 +56,7 @@ Queue* show_menu( Queue* queue )
   printf( "Agregar elemento a la cola:   (2)\n" );
   printf( "Sacar elemento de la cola:    (3)\n" );
   printf( "Listar cola:                  (4)\n" );
-  printf( "Ordenar cola:                 (5)\n" );
+  printf( "Invertir cola:                (5)\n" );
   printf( "Eliminar la cola:             (6)\n" );
   printf( "Salir:                        (7)\n" );
   printf( "\n\n" );
@@ -190,35 +190,30 @@ Queue* show_queue( Queue* queue )
   return queue;
 }
 
-Queue* sort_queue( Queue* queue )
+Queue* invert_queue( Queue* queue )
 {
-  bool no_verbose =     false;
-  Queue* sorted_queue = create_queue( no_verbose );
+  bool no_verbose =       false;
+  Queue* inverted_queue = create_queue( no_verbose );
 
+  // Crear una cola auxiliar en el orden inverso con las mismas operaciones de cola.
   while( !is_empty( queue, no_verbose ) )
   {
     int current = get_front_value( queue, no_verbose );
+
     dequeue( queue, no_verbose );
-
-    while( !is_empty( sorted_queue, no_verbose ) && get_front_value( sorted_queue, no_verbose ) > current )
-    {
-      int front_value = get_front_value( sorted_queue, no_verbose );
-      dequeue( sorted_queue, no_verbose );
-      enqueue( queue, front_value, no_verbose );
-    }
-
-    enqueue( sorted_queue, current, no_verbose );
+    enqueue(inverted_queue, current, no_verbose);
   }
 
-  while( !is_empty( sorted_queue, no_verbose ) )
+  // Sobreescribir la cola invertida.
+  while( !is_empty( inverted_queue, no_verbose ) )
   {
-    int front_value = get_front_value( sorted_queue, no_verbose );
-    dequeue( sorted_queue, no_verbose );
-    enqueue( queue, front_value, no_verbose );
+    int current = get_front_value( inverted_queue, no_verbose );
+
+    dequeue( inverted_queue, no_verbose );
+    enqueue( queue, current, no_verbose );
   }
 
-  printf( "Cola ordenada\n" );
-
+  printf( "Cola invertida\n" );
   return queue;
 }
 
