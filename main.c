@@ -1,9 +1,3 @@
-/**
- *
- *  Desarrollar interseccion de 2 listas.
- *
-**/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -18,20 +12,30 @@ typedef struct data
 typedef struct
 {
   Node* top;
+  char* list_name;
 } List;
 
+typedef struct
+{
+  List* list_1;
+  List* list_2;
+  List* current_list;
+} Lists;
+
 void execute();
-List* show_menu( List* );
-List* resolve_option( int, List* );
+Lists* init_lists();
 List* create_list( bool );
+Lists* show_menu( Lists* );
+Lists* resolve_option( int, Lists* );
+List* switch_list( Lists* );
 List* push( List*, int, bool );
-List* pop( List*, bool );
-bool is_empty( List*, bool );
-List* show_list( List* );
-//List* join_list( List* );
+Node* create_node( int );
+Node* resolve_unique_value( Node*, Node* );
 int get_top_value( List*, bool );
-int resolve_value_pop( int );
-List* delete_list( List* );
+bool is_empty( List*, bool );
+//List* pop(List*, bool);
+//List* show_list(List*);
+//List* delete_list(List*);
 
 int main()
 {
@@ -41,38 +45,75 @@ int main()
 
 void execute()
 {
-  List* list = NULL;
+  Lists* lists = init_lists();
 
   while( true )
   {
-    list = show_menu( list );
+    lists = show_menu( lists );
   }
-
   return;
 }
 
-List* show_menu( List* list )
+/**
+ *  La idea es que el programa siempre cree la inicilizacion de las dos listas en backgraound,
+ *  ademas de que seleccione la lista uno por defult para empezar a trabajar.
+**/
+Lists* init_lists()
 {
-  int temp_option = -1;
+  bool no_verbose = false;
 
-  printf("\n\n");
-  printf( "Ingrese el numero de opcion: \n" );
-  printf( "Crear lista:                 (1)\n" );
-  printf( "Agregar elemento a la lista: (2)\n" );
-  printf( "Sacar elemento de la lista:  (3)\n" );
-  printf( "Listar lista:                (4)\n" );
-  printf( "Ordenar lista:               (5)\n" );
-  printf( "Eliminar la lista:           (6)\n" );
-  printf( "Salir:                       (7)\n" );
-  printf("\n\n");
+  Lists* new_lists =          (Lists*)malloc( sizeof ( Lists ) );
 
-  scanf( " %d", &temp_option );
-  fflush( stdin );
+  new_lists->list_1 =             NULL;
+  new_lists->list_2 =             NULL;
+  new_lists->current_list =       NULL;
 
-  return resolve_option( temp_option, list );
+  new_lists->list_1 =             create_list( no_verbose );
+  new_lists->list_2 =             create_list( no_verbose );
+
+  new_lists->list_1->list_name =  "|---LISTA 1---|";
+  new_lists->list_2->list_name =  "|---LISTA 2---|";
+
+  new_lists->current_list =       new_lists->list_1;
+
+  return new_lists;
 }
 
-List* resolve_option( int option, List* list )
+List* create_list( bool is_verbose )
+{
+  List* temp_list = (List*)malloc( sizeof( List ) );
+  temp_list->top =  NULL;
+
+  if( is_verbose ) printf( "Se creó la lista %p\n", (void*)temp_list );
+
+  return temp_list;
+}
+
+Lists* show_menu( Lists* lists )
+{
+  int temp_option = NULL;
+
+  printf( "/**************************************/\n" );
+  printf( "TRABAJANDO CON LA LISTA: %s             \n", lists->current_list->list_name );
+  printf( "/**************************************/\n" );
+  printf( "\n                                      \n" );
+
+  printf( "Ingrese el número de opción:            \n" );
+  printf( "Cambiar de lista actual:             (1)\n" );
+  printf( "Agregar elemento a la lista actual:  (2)\n" );
+  printf( "Sacar elemento de la lista actual:   (3)\n" );
+  printf( "Listar lista actual:                 (4)\n" );
+  printf( "Eliminar lista actual:               (5)\n" );
+  printf( "Salir:                               (6)\n" );
+  printf( "\n                                      \n" );
+
+  scanf(" %d", &temp_option );
+  fflush( stdin );
+
+  return resolve_option( temp_option, lists );
+}
+
+Lists* resolve_option( int option, Lists* lists )
 {
   int input_user_value =  NULL;
   bool verbose =          true;
@@ -80,110 +121,94 @@ List* resolve_option( int option, List* list )
   switch( option )
   {
     case 1:
-      list = create_stack( verbose );
+      lists->current_list = switch_list( lists );
     break;
     case 2:
-      list = push( list, input_user_value, verbose );
+      lists->current_list = push( lists->current_list, input_user_value, verbose );
     break;
     case 3:
-      list = pop( list, verbose );
+      //pop;
     break;
     case 4:
-      list = show_stack( list );
+      //show_list;
     break;
     case 5:
-      list = sort_stack( list );
+      //delete_list;
     break;
     case 6:
-      list = delete_stack( list );
-    break;
-    case 7:
       exit( EXIT_SUCCESS );
     break;
   }
 
-  return list;
+  return lists;
+
+/*
+  //else if (option == 6)
+  {
+    if (lists->current_list != NULL)
+      lists->current_list = pop(lists->current_list, verbose);
+    else
+      printf("No se ha seleccionado ninguna lista para quitar elementos.\n");
+  }
+*/
 }
 
-List* create_stack( bool is_verbose )
+List* switch_list( Lists* lists )
 {
-  List* temp_list = ( List* )malloc( sizeof( List ) );
-  temp_list->top =   NULL;
+  if( lists->current_list == lists->list_1 ) return lists->list_2;
   
-  if( is_verbose ) printf( "Se creo la lista %p\n", (void*)temp_list );
-
-  return temp_list;
+  return lists->list_1;
 }
 
 List* push( List* list, int aux_value, bool is_verbose )
 {
-  int temp_number = aux_value;
-  Node* node =      NULL;
+  Node* node =  NULL;
 
-  node = (Node*)malloc( sizeof( Node ) );
-  
-  if( temp_number == NULL )
+  node = create_node( aux_value );
+  node = resolve_unique_value( list->top, node );
+
+  node->next =    list->top;
+  list->top =     node;
+
+  if( is_verbose ) printf( "Se creó el nodo %p y valor de memoria %d\n", (void*)node, get_top_value( list, is_verbose ) );
+
+  return list;
+}
+
+Node* create_node( int value )
+{
+  int temp_number = value;
+  Node* new_node =  NULL;
+  new_node =        (Node*)malloc( sizeof( Node );
+
+  if( value == NULL )
   {
     printf( "Ingrese valor:\n" );
     scanf( " %d", &temp_number );
     fflush( stdin );
   }
 
-  node->number =    temp_number;
-  node->next =      NULL;
-    
-  node->next =  list->top;
-  list->top =   node;
+  new_node->number =  temp_number;
+  new_node->count =   1;
+  new_node->next =    NULL;
 
-  if( is_verbose ) printf( "Se creo el nodo %p y valor de memoria %d \n", (void*)node, get_top_value( list, is_verbose ) );
-
-  return list;
+  return new_node;
 }
 
-List* pop( List* list, bool is_verbose )
+Node* resolve_unique_value( Node* list_node, Node* new_node )
 {
-  int value_erase;
-  Node* memory_erase;
+  if( list_node == NULL ) return new_node;
 
-  if( is_empty( list, is_verbose ) ) return list;
+  if( list_node->number > new_node->number ) return create_node( new_node->number );
 
-  Node* temp =    list->top;
-  value_erase =   get_top_value( list, is_verbose );
-  memory_erase =  temp;
-
-  list->top =    temp->next;
-  free( temp );
-
-  if( is_verbose ) printf( "Se borro el nodo %p y valor de memoria %d \n", (void*)memory_erase, value_erase );
-
-  return list;
-}
-
-bool is_empty( List* list, bool is_verbose )
-{
-  if( list->top != NULL ) return false;
-
-  if( is_verbose ) printf( "Pila vacia \n" );
-  return true;
-}
-
-List* show_stack( List* list )
-{
-  bool verbose = true;
-
-  if( is_empty( list, verbose ) ) return list;
-
-  Node* current = list->top;
-  
-  printf( "Contenido de la lista: \n" );
-
-  while( current != NULL )
+  if( list_node->number == new_node->number )
   {
-      printf( "%d \n", current->number );
-      current = current->next;
+    list_node->count++;
+    return list_node;
   }
 
-  return list;
+  
+
 }
 
 int get_top_value( List* list, bool is_verbose )
@@ -193,20 +218,73 @@ int get_top_value( List* list, bool is_verbose )
   return list->top->number;
 }
 
-List* delete_stack( List* list )
+bool is_empty( List* list, bool is_verbose )
 {
-  bool verbose = true;
-  bool no_verbose = false;
+    if( list->top != NULL ) return false;
 
-  if( is_empty( list, verbose ) ) return list;
+    if( is_verbose ) printf( "Lista vacía\n" );
 
-  while( !is_empty( list, no_verbose ) )
-  {
-    pop( list, no_verbose );
-  }
-
-  free( list );
-
-  printf( "La lista ha sido eliminada\n" );
-  return NULL;
+    return true;
 }
+
+/*
+List* pop(List* list, bool is_verbose)
+{
+    int value_erase;
+    Node* memory_erase;
+
+    if (is_empty(list, is_verbose)) return list;
+
+    Node* temp = list->top;
+    value_erase = get_top_value(list, is_verbose);
+    memory_erase = temp;
+
+    list->top = temp->next;
+    free(temp);
+
+    if (is_verbose) printf("Se borró el nodo %p y valor de memoria %d\n", (void*)memory_erase, value_erase);
+
+    return list;
+}
+*/
+
+/*
+List* show_list(List* list)
+{
+    bool verbose = true;
+
+    if (is_empty(list, verbose)) return list;
+
+    Node* current = list->top;
+
+    printf("Contenido de la lista:\n");
+
+    while (current != NULL)
+    {
+        printf("%d\n", current->number);
+        current = current->next;
+    }
+
+    return list;
+}
+*/
+
+/*
+List* delete_list(List* list)
+{
+    bool verbose = true;
+    bool no_verbose = false;
+
+    if (is_empty(list, verbose)) return list;
+
+    while (!is_empty(list, no_verbose))
+    {
+        pop(list, no_verbose);
+    }
+
+    free(list);
+
+    printf("La lista ha sido eliminada\n");
+    return NULL;
+}
+*/
