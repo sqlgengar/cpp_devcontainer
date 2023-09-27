@@ -130,8 +130,8 @@ Lists* resolve_option( int option, Lists* lists )
       lists->current_list = switch_list( lists );
     break;
     case 2:
-      temp_temp_value_user =          input_temp_temp_value_user();
-      lists->current_list = push( lists->current_list, temp_temp_value_user, verbose );
+      temp_temp_value_user =  input_temp_temp_value_user();
+      lists->current_list =   push( lists->current_list, temp_temp_value_user, verbose );
     break;
     case 3:
       lists->current_list = pop( lists->current_list, verbose );
@@ -146,7 +146,7 @@ Lists* resolve_option( int option, Lists* lists )
       lists->join_list = intersect_lists( lists );
     break;
     case 7:
-      show_interseciont_list( lists->join_list );
+      show_list( lists->join_list );
     break;
     case 8:
       exit( EXIT_SUCCESS );
@@ -285,7 +285,7 @@ void show_list( List* list )
     printf( "Nodo      %d\n", count );
     printf( "valor:    %d\n", current->number );
     printf( "contador: %d\n", current->count );
-    printf( "            \n", current->count );
+    printf( "            \n" );
 
     current = current->next;
     count++;
@@ -360,30 +360,4 @@ List* intersect_lists( Lists* lists )
   }
 
   return join;
-}
-
-void show_interseciont_list( List* join_list )
-{
-  bool verbose =  true;
-  Node* current = NULL;
-  int count =     1;
-
-  if( is_empty( join_list, verbose ) ) return;
-
-  current = join_list->top;
-
-  printf( "Contenido de la lista:\n" );
-
-  while( current != NULL )
-  {
-    printf( "------------\n" );
-    printf( "Nodo      %d\n", count );
-    printf( "valor:    %d\n", current->number );
-    printf( "contador: %d\n", current->count );
-    printf( "            \n", current->count );
-
-    current = current->next;
-    count++;
-  }
-  return;
 }
