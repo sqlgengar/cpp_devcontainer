@@ -16,7 +16,7 @@ typedef struct
 {
     Node* front;
     Node* rear;
-} Queue;
+} Queue; 
 
 void execute();
 Queue* show_menu( Queue* );
