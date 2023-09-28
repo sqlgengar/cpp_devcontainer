@@ -1,3 +1,15 @@
+/*
+
+Pila - Desarrollar un menu de operaciones basicas junto con pila ordenada.
+
+*/
+
+/**
+ *  Muchas funciones tiene implementado el parametro is_verbose.
+ *  Esto es para que se pueda reutilizar la misma funcion para el usuario o para uso interno del programa.
+ *  En caso de que no se necesite mostrar los mensajes de ouptup
+**/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -5,40 +17,27 @@
 typedef struct data
 {
   int number;
-  int count;
-  struct data* next;
+  struct data* preview;
 } Node;
 
 typedef struct
 {
   Node* top;
-  char* list_name;
-} List;
-
-typedef struct
-{
-  List* list_1;
-  List* list_2;
-  List* join_list;
-  List* current_list;
-} Lists;
+} Stack;
 
 void execute();
-Lists* init_lists();
-List* create_list( bool );
-Lists* show_menu( Lists* );
-Lists* resolve_option( int, Lists* );
-List* switch_list( Lists* );
-int input_temp_temp_value_user();
-List* push( List*, int, bool );
-Node* create_node( int );
-int get_top_temp_temp_value( List*, bool );
-bool is_empty( List*, bool );
-List* pop( List*, bool );
-void show_list( List* );
-Lists* delete_list( Lists* );
-List* intersect_lists( Lists* );
-void show_interseciont_list( List* );
+Stack* show_menu( Stack* );
+Stack* resolve_option( int, Stack* );
+Stack* create_stack( bool );
+Stack* push( Stack*, int, bool );
+Stack* pop( Stack*, bool );
+bool is_empty( Stack*, bool );
+Stack* show_stack( Stack* );
+Stack* sort_stack( Stack* );
+int get_top_value( Stack*, bool );
+int resolve_value_pop( int );
+Stack* delete_stack( Stack* stack );
+bool is_exist_stack( Stack*, bool );
 
 int main()
 {
@@ -48,316 +47,226 @@ int main()
 
 void execute()
 {
-  Lists* lists = init_lists();
+  Stack* stack = NULL;
 
   while( true )
   {
-    lists = show_menu( lists );
+    stack = show_menu( stack );
   }
+
   return;
 }
 
-/**
- *  La idea es que el programa siempre cree la inicilizacion de las dos listas en backgraound,
- *  ademas de que seleccione la lista uno por defult para empezar a trabajar.
-**/
-Lists* init_lists()
+Stack* show_menu( Stack* stack )
 {
-  bool no_verbose = false;
+  int temp_option = -1;
 
-  Lists* new_lists =          (Lists*)malloc( sizeof ( Lists ) );
+  printf("\n\n");
+  printf( "Ingrese el numero de opcion:      \n" );
+  printf( "Crear pila:                    (1)\n" );
+  printf( "Agregar elemento a la pila:    (2)\n" );
+  printf( "Sacar elemento de la pila:     (3)\n" );
+  printf( "Listar pila:                   (4)\n" );
+  printf( "Ordenar pila:                  (5)\n" );
+  printf( "Eliminar la pila:              (6)\n" );
+  printf( "Salir:                         (7)\n" );
+  printf("\n\n");
 
-  new_lists->list_1 =             NULL;
-  new_lists->list_2 =             NULL;
-  new_lists->current_list =       NULL;
-  new_lists->current_list =       NULL;
-
-  new_lists->list_1 =             create_list( no_verbose );
-  new_lists->list_2 =             create_list( no_verbose );
-
-  new_lists->list_1->list_name =  "|---LISTA 1---|";
-  new_lists->list_2->list_name =  "|---LISTA 2---|";
-
-  new_lists->current_list =       new_lists->list_1;
-
-  return new_lists;
-}
-
-List* create_list( bool is_verbose )
-{
-  List* temp_list = (List*)malloc( sizeof( List ) );
-  temp_list->top =  NULL;
-
-  if( is_verbose ) printf( "Se creó la lista %p\n", (void*)temp_list );
-
-  return temp_list;
-}
-
-Lists* show_menu( Lists* lists )
-{
-  int temp_option;
-
-  printf( "/**************************************/\n" );
-  printf( "TRABAJANDO CON LA LISTA: %s             \n", lists->current_list->list_name );
-  printf( "/**************************************/\n" );
-  printf( "\n                                      \n" );
-
-  printf( "Ingrese el número de opción:            \n" );
-  printf( "Cambiar de lista actual:             (1)\n" );
-  printf( "Agregar elemento a la lista actual:  (2)\n" );
-  printf( "Sacar elemento de la lista actual:   (3)\n" );
-  printf( "Listar lista actual:                 (4)\n" );
-  printf( "Eliminar lista actual:               (5)\n" );
-  printf( "Inteseccion de listas:               (6)\n" );
-  printf( "Mostrar interseccion de listas:      (7)\n" );
-  printf( "Salir:                               (8)\n" );
-  printf( "\n                                      \n" );
-
-  scanf(" %d", &temp_option );
+  scanf( " %d", &temp_option );
   fflush( stdin );
 
-  return resolve_option( temp_option, lists );
+  return resolve_option( temp_option, stack );
 }
 
-Lists* resolve_option( int option, Lists* lists )
+Stack* resolve_option( int option, Stack* stack )
 {
-  int temp_temp_value_user;
-  bool verbose =    true;
+  int input_user_value =  NULL;
+  bool verbose =          true;
 
   switch( option )
   {
     case 1:
-      lists->current_list = switch_list( lists );
+      stack = create_stack( verbose );
     break;
     case 2:
-      temp_temp_value_user =  input_temp_temp_value_user();
-      lists->current_list =   push( lists->current_list, temp_temp_value_user, verbose );
+      stack = push( stack, input_user_value, verbose );
     break;
     case 3:
-      lists->current_list = pop( lists->current_list, verbose );
+      stack = pop( stack, verbose );
     break;
     case 4:
-      show_list( lists->current_list );
+      stack = show_stack( stack );
     break;
     case 5:
-      lists = delete_list( lists );
+      stack = sort_stack( stack );
     break;
     case 6:
-      lists->join_list = intersect_lists( lists );
+      stack = delete_stack( stack );
     break;
     case 7:
-      show_list( lists->join_list );
-    break;
-    case 8:
       exit( EXIT_SUCCESS );
     break;
   }
 
-  return lists;
+  return stack;
 }
 
-List* switch_list( Lists* lists )
+Stack* create_stack( bool is_verbose )
 {
-  if( lists->current_list == lists->list_1 ) return lists->list_2;
+  Stack* temp_stack = ( Stack* )malloc( sizeof( Stack ) );
+  temp_stack->top =   NULL;
   
-  return lists->list_1;
-}
+  if( is_verbose ) printf("Se creo la pila %p\n", (void*)temp_stack);
 
-int input_temp_temp_value_user()
-{
-  int temp_temp_temp_value;
-
-  printf( "Ingrese un valor: \n" );
-  scanf( " %d", &temp_temp_temp_value );
-  fflush( stdin );
-
-  return temp_temp_temp_value;
+  return temp_stack;
 }
 
 /**
- *  Este push siempre busca donde insertar el nuevo elemento de forma correcta, por lo cual lo pila siempre va a estar ordenada,
- *  si el valor esta repetido, suma al contador, evitando la duplicacion de valores.
- * 
- *  Una opcion para entender mas facil el push seria devidirlo en varias partes.
- *  por ejemplo, asumir que la lista no esta ordenada, en primera isntancia buscar si el valor es repetido
- *  despues se podria simplemente insertar en valor en la parte mas alta de la pila, y ordenar la pila a lo ultimo.
+ *  push va a contar con un valor auxiliar que se le puede pasar a la funcion.
+ *  esto es para distinguir el caso de uso frente a una usuario que ingresa valores 
+ *  y cuando el programa lo utiliza para funciones internas.
 **/
-List* push( List* list, int temp_temp_value, bool is_verbose )
+Stack* push( Stack* stack, int aux_value, bool is_verbose )
 {
-  bool no_verbose = false;
-  Node* new_node =  create_node( temp_temp_value );
+  int temp_number =     aux_value;
+  Node* little_stack =  NULL;
 
-  if( is_empty( list, no_verbose ) || temp_temp_value < list->top->number )
-  {
-    new_node->next =  list->top;
-    list->top =       new_node;
-  }
-
-  else
-  {
-    Node* current = list->top;
-
-    while( current->next != NULL && current->next->number < temp_temp_value )
-    {
-      current = current->next;
-    }
-
-    if( current->number == temp_temp_value )
-    {
-      current->count++;
-      free(new_node);
-    }
-
-    else
-    {
-      new_node->next =  current->next;
-      current->next =   new_node;
-    }
-  }
-
-  if( is_verbose ) printf( "Se creó el nodo %p y valor de memoria %d\n", (void*)new_node, get_top_temp_temp_value( list, is_verbose ) );
-
-  return list;
-}
-
-Node* create_node( int temp_temp_value )
-{
-  Node* new_node =  NULL;
-  new_node =        (Node*)malloc( sizeof( Node ) );
-
-  new_node->number =  temp_temp_value;
-  new_node->count =   1;
-  new_node->next =    NULL;
-
-  return new_node;
-}
-
-int get_top_temp_temp_value( List* list, bool is_verbose )
-{
-  if( is_empty( list, is_verbose ) ) return 0;
+  // Crear nodo que genera espacio de memoria
+  little_stack = ( Node* )malloc( sizeof( Node ) );
   
-  return list->top->number;
+  if( temp_number == NULL )
+  {
+    // Cargar datos de nodo si no se paso un valor auxiliar
+    printf( "Ingrese valor:\n" );
+    scanf( " %d", &temp_number );
+    fflush( stdin );
+  }
+
+  // Cargar dato en el nuevo nodo
+  little_stack->number =  temp_number;
+    
+  // Reasigna direccion - apilar
+  little_stack->preview = stack->top;
+  stack->top =            little_stack;
+
+  if( is_verbose ) printf( "Se creo el nodo %p y valor de memoria %d \n", (void*)little_stack, get_top_value( stack, is_verbose ) );
+
+  return stack;
 }
 
-bool is_empty( List* list, bool is_verbose )
+Stack* pop( Stack* stack, bool is_verbose )
 {
-  if( list->top != NULL ) return false;
+  int value_erase;
+  Node* memory_erase;
 
-  if( is_verbose ) printf( "Lista vacía\n" );
+  if( is_empty( stack, is_verbose ) ) return stack;
 
+  // Crear nodo temporarl para operaciones
+  Node* temp =    stack->top;
+
+  // Gaurdar datos con los que se van a trabajar para debuggin
+  value_erase =   get_top_value( stack, is_verbose );
+  memory_erase =  temp;
+
+  // Reasignar memoria
+  stack->top =    temp->preview;
+  free( temp );
+
+  if( is_verbose ) printf( "Se borro el nodo %p y valor de memoria %d \n", (void*)memory_erase, value_erase );
+
+  return stack;
+}
+
+bool is_empty( Stack* stack, bool is_verbose )
+{
+  if( stack->top != NULL ) return false;
+
+  if( is_verbose ) printf( "Pila vacia \n" );
   return true;
 }
 
-List* pop(List* list, bool is_verbose)
+Stack* show_stack( Stack* stack )
 {
-  int temp_temp_value_erase;
-  Node* memory_erase;
+  bool verbose = true;
 
-  if( is_empty( list, is_verbose ) ) return list;
+  if( is_exist_stack( stack, verbose ) ) return stack;
+  if( is_empty( stack, verbose ) ) return stack;
 
-  Node* temp =    list->top;
-  temp_temp_value_erase =   get_top_temp_temp_value( list, is_verbose );
-  memory_erase =  temp;
-
-  list->top = temp->next;
-  free(temp);
-
-  if( is_verbose ) printf( "Se borró el nodo %p y valor de memoria %d\n", (void*)memory_erase, temp_temp_value_erase );
-
-  return list;
-}
-
-void show_list( List* list )
-{
-  bool verbose =  true;
-  Node* current = NULL;
-  int count =     1;
-
-  if( is_empty( list, verbose ) ) return;
-
-  current = list->top;
-
-  printf( "Contenido de la lista:\n" );
+  Node* current = stack->top;
+  
+  printf( "Contenido de la pila: \n" );
 
   while( current != NULL )
   {
-    printf( "------------\n" );
-    printf( "Nodo      %d\n", count );
-    printf( "valor:    %d\n", current->number );
-    printf( "contador: %d\n", current->count );
-    printf( "            \n" );
-
-    current = current->next;
-    count++;
+      printf( "%d \n", current->number );
+      current = current->preview;
   }
-  return;
+
+  return stack;
 }
 
-Lists* delete_list( Lists* lists )
-{
-    bool verbose =    true;
-    bool no_verbose = false;
-    char* list_name = lists->current_list->list_name;
-
-    if( is_empty( lists->current_list, verbose ) ) return lists;
-
-    if( lists->current_list == lists->list_1 )
-    {
-      while( !is_empty( lists->list_1, no_verbose ) )
-      {
-        pop( lists->list_1, no_verbose );
-      }
-      free( lists->list_1 );
-
-      printf( "La lista %s ha sido eliminada\n", list_name );
-
-      lists->current_list = lists->list_2;
-      return lists;
-    }
-
-    while( !is_empty( lists->list_2, no_verbose ) )
-    {
-        pop( lists->list_2, no_verbose );
-    }
-    free( lists->list_2 );
-
-    printf("La lista %s ha sido eliminada\n", list_name );
-
-    lists->current_list = lists->list_1;
-    return lists;
-}
-
-List* intersect_lists( Lists* lists )
+// Ordenamiento por insetion sort
+Stack* sort_stack( Stack* stack )
 {
   bool no_verbose = false;
-  List* join =      create_list( no_verbose );
-  Node* node_1 =    lists->list_1->top;
+  Stack* sorted_stack = create_stack( no_verbose );
 
-  while( node_1 != NULL )
+  while( !is_empty( stack, no_verbose ) )
   {
-    int temp_value =    node_1->number;
-    Node* node_2 =      lists->list_2->top;
-    int count_node_1 =  node_1->count;
-    int count_node_2 =  0;
+    int current = get_top_value( stack, no_verbose );
+    pop( stack, no_verbose );
 
-    // Contar la cantidad de veces que se repite el elemento en la segunda lista
-    while( node_2 != NULL )
+    while( !is_empty( sorted_stack, no_verbose ) && get_top_value( sorted_stack, no_verbose ) > current )
     {
-      if( node_2->number == temp_value )
-      {
-        count_node_2 = node_2->count;
-        break;
-      }
-      node_2 = node_2->next;
+      int top_value = get_top_value( sorted_stack, no_verbose );
+      pop( sorted_stack, no_verbose );
+      push( stack, top_value, no_verbose );
     }
 
-    // Agregar el elemento a la lista de resultados según la cantidad mínima de repeticiones
-    for( int i = 0; i < count_node_1 && i < count_node_2; i++ )
-    {
-      join = push( join, temp_value, false );
-    }
-    node_1 = node_1->next;
+    push( sorted_stack, current, no_verbose );
   }
 
-  return join;
+  while( !is_empty( sorted_stack, no_verbose ) )
+  {
+      int top_value = get_top_value( sorted_stack, no_verbose );
+      pop( sorted_stack, no_verbose );
+      push( stack, top_value, no_verbose );
+  }
+
+  printf( "Pila ordenada\n" );
+
+  return stack;
+}
+
+int get_top_value( Stack* stack, bool is_verbose )
+{
+  if( is_empty( stack, is_verbose ) ) return 0;
+  
+  return stack->top->number;
+}
+
+Stack* delete_stack( Stack* stack )
+{
+  bool verbose = true;
+  bool no_verbose = false;
+
+  if( is_empty( stack, verbose ) ) return stack;
+
+  while( !is_empty( stack, no_verbose ) )
+  {
+    pop( stack, no_verbose );
+  }
+
+  free(stack);
+
+  printf("La pila ha sido eliminada\n");
+  return NULL;
+}
+
+bool is_exist_stack( Stack* stack, bool is_verbose )
+{
+  if( stack != NULL ) return false;
+
+  if( is_verbose ) printf( "Pila no existe \n" );
+  return true;
 }

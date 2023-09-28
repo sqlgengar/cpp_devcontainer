@@ -28,6 +28,7 @@ bool is_empty( Queue*, bool );
 Queue* show_queue( Queue* );
 Queue* invert_queue( Queue* );
 int get_front_value( Queue*, bool );
+int get_rear_value( Queue*, bool );
 Queue* delete_queue( Queue* );
 
 int main()
@@ -87,7 +88,7 @@ Queue* resolve_option( int option, Queue* queue )
       queue = show_queue( queue );
     break;
     case 5:
-      queue = sort_queue( queue );
+      queue = invert_queue( queue );
     break;
     case 6:
       queue = delete_queue( queue );
@@ -137,7 +138,7 @@ Queue* enqueue( Queue* queue, int aux_value, bool is_verbose )
   queue->rear->next = new_node;
   queue->rear =       new_node;
 
-  if( is_verbose ) printf( "Se encolo el nodo %p y valor de memoria %d \n", (void*)new_node, get_front_value( queue, is_verbose ) );
+  if( is_verbose ) printf( "Se encolo el nodo %p y valor de memoria %d \n", (void*)new_node, get_rear_value( queue, is_verbose ) );
 
   return queue;
 }
@@ -190,38 +191,40 @@ Queue* show_queue( Queue* queue )
   return queue;
 }
 
-Queue* invert_queue( Queue* queue )
-{
-  bool no_verbose =       false;
-  Queue* inverted_queue = create_queue( no_verbose );
+Queue* invert_queue(Queue* queue) {
+  bool no_verbose = false;
+  Queue* inverted_queue = create_queue(no_verbose);
 
-  // Crear una cola auxiliar en el orden inverso con las mismas operaciones de cola.
-  while( !is_empty( queue, no_verbose ) )
-  {
-    int current = get_front_value( queue, no_verbose );
+  // Desencola cada elemento de la cola original y encola en la cola invertida.
+  while (!is_empty(queue, no_verbose)) {
+    int current = get_front_value(queue, no_verbose);
 
-    dequeue( queue, no_verbose );
+    dequeue(queue, no_verbose);
     enqueue(inverted_queue, current, no_verbose);
   }
 
-  // Sobreescribir la cola invertida.
-  while( !is_empty( inverted_queue, no_verbose ) )
-  {
-    int current = get_front_value( inverted_queue, no_verbose );
+  // Asigna la cola invertida a la cola principal.
+  *queue = *inverted_queue;
 
-    dequeue( inverted_queue, no_verbose );
-    enqueue( queue, current, no_verbose );
-  }
+  free(inverted_queue);
 
-  printf( "Cola invertida\n" );
+  printf("Cola invertida\n");
   return queue;
 }
+
 
 int get_front_value( Queue* queue, bool is_verbose )
 {
   if( is_empty( queue, is_verbose ) ) return 0;
 
   return queue->front->number;
+}
+
+int get_rear_value( Queue* queue, bool is_verbose )
+{
+  if( is_empty( queue, is_verbose ) ) return 0;
+
+  return queue->rear->number;
 }
 
 Queue* delete_queue( Queue* queue )

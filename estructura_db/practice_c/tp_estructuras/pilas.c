@@ -37,6 +37,7 @@ Stack* sort_stack( Stack* );
 int get_top_value( Stack*, bool );
 int resolve_value_pop( int );
 Stack* delete_stack( Stack* stack );
+bool is_exist_stack( Stack*, bool );
 
 int main()
 {
@@ -188,6 +189,7 @@ Stack* show_stack( Stack* stack )
 {
   bool verbose = true;
 
+  if( is_exist_stack( stack, verbose ) ) return stack;
   if( is_empty( stack, verbose ) ) return stack;
 
   Node* current = stack->top;
@@ -259,4 +261,12 @@ Stack* delete_stack( Stack* stack )
 
   printf("La pila ha sido eliminada\n");
   return NULL;
+}
+
+bool is_exist_stack( Stack* stack, bool is_verbose )
+{
+  if( stack != NULL ) return false;
+
+  if( is_verbose ) printf( "Pila no existe \n" );
+  return true;
 }
