@@ -39,7 +39,6 @@ void show_list( List* );
 Lists* delete_list( Lists* );
 List* intersect_lists( Lists* );
 void show_interseciont_list( List* );
-bool is_exist_list( Lists*, bool );
 
 int main()
 {
@@ -274,7 +273,6 @@ void show_list( List* list )
   Node* current = NULL;
   int count =     1;
   
-  if( is_exist_list( list, verbose ) ) return list;
   if( is_empty( list, verbose ) ) return;
 
   current = list->top;
@@ -362,11 +360,4 @@ List* intersect_lists( Lists* lists )
   }
 
   return join;
-}
-bool is_exist_list( Lists* lists, bool is_verbose )
-{
-  if( lists != NULL ) return false;
-
-  if( is_verbose ) printf( "La lista no existe \n" );
-  return true;
 }
