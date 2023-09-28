@@ -158,6 +158,8 @@ Lists* resolve_option( int option, Lists* lists )
 
 List* switch_list( Lists* lists )
 {
+  if( lists->list_1 == NULL ) return lists->list_2;
+  if( lists->list_2 == NULL ) return lists->list_1;
   if( lists->current_list == lists->list_1 ) return lists->list_2;
   
   return lists->list_1;
