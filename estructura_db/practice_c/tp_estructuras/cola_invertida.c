@@ -191,27 +191,34 @@ Queue* show_queue( Queue* queue )
   return queue;
 }
 
-Queue* invert_queue(Queue* queue) {
+Queue* invert_queue(Queue* queue)
+{
   bool no_verbose = false;
-  Queue* inverted_queue = create_queue(no_verbose);
 
-  // Desencola cada elemento de la cola original y encola en la cola invertida.
-  while (!is_empty(queue, no_verbose)) {
-    int current = get_front_value(queue, no_verbose);
-
-    dequeue(queue, no_verbose);
-    enqueue(inverted_queue, current, no_verbose);
+  if( is_empty( queue, no_verbose ) || queue->front == queue->rear )
+  {
+    printf( "Cola invertida\n" );
+    return queue;
   }
 
-  // Asigna la cola invertida a la cola principal.
-  *queue = *inverted_queue;
+  Node* prev =    NULL;
+  Node* next =    NULL;
+  Node* current = queue->front;
 
-  free(inverted_queue);
+  while( current != NULL )
+  {
+    next =          current->next;
+    current->next = prev;
+    prev =          current;
+    current =       next;
+  }
 
-  printf("Cola invertida\n");
+  queue->rear =   queue->front;
+  queue->front =  prev;
+
+  printf( "Cola invertida\n" );
   return queue;
 }
-
 
 int get_front_value( Queue* queue, bool is_verbose )
 {

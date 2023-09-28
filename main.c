@@ -1,13 +1,5 @@
-/*
-
-Pila - Desarrollar un menu de operaciones basicas junto con pila ordenada.
-
-*/
-
 /**
- *  Muchas funciones tiene implementado el parametro is_verbose.
- *  Esto es para que se pueda reutilizar la misma funcion para el usuario o para uso interno del programa.
- *  En caso de que no se necesite mostrar los mensajes de ouptup
+ *  Desarrollar menu de operaciones basicas junto con cola invertida.
 **/
 
 #include <stdio.h>
@@ -16,28 +8,28 @@ Pila - Desarrollar un menu de operaciones basicas junto con pila ordenada.
 
 typedef struct data
 {
-  int number;
-  struct data* preview;
+    int number;
+    struct data* next;
 } Node;
 
 typedef struct
 {
-  Node* top;
-} Stack;
+    Node* front;
+    Node* rear;
+} Queue; 
 
 void execute();
-Stack* show_menu( Stack* );
-Stack* resolve_option( int, Stack* );
-Stack* create_stack( bool );
-Stack* push( Stack*, int, bool );
-Stack* pop( Stack*, bool );
-bool is_empty( Stack*, bool );
-Stack* show_stack( Stack* );
-Stack* sort_stack( Stack* );
-int get_top_value( Stack*, bool );
-int resolve_value_pop( int );
-Stack* delete_stack( Stack* stack );
-bool is_exist_stack( Stack*, bool );
+Queue* show_menu( Queue* );
+Queue* resolve_option( int, Queue* );
+Queue* create_queue( bool );
+Queue* enqueue( Queue*, int, bool );
+Queue* dequeue( Queue*, bool );
+bool is_empty( Queue*, bool );
+Queue* show_queue( Queue* );
+Queue* invert_queue( Queue* );
+int get_front_value( Queue*, bool );
+int get_rear_value( Queue*, bool );
+Queue* delete_queue( Queue* );
 
 int main()
 {
@@ -47,38 +39,36 @@ int main()
 
 void execute()
 {
-  Stack* stack = NULL;
+  Queue* queue = NULL;
 
   while( true )
   {
-    stack = show_menu( stack );
+    queue = show_menu(queue);
   }
-
-  return;
 }
 
-Stack* show_menu( Stack* stack )
+Queue* show_menu( Queue* queue )
 {
   int temp_option = -1;
 
-  printf("\n\n");
-  printf( "Ingrese el numero de opcion:      \n" );
-  printf( "Crear pila:                    (1)\n" );
-  printf( "Agregar elemento a la pila:    (2)\n" );
-  printf( "Sacar elemento de la pila:     (3)\n" );
-  printf( "Listar pila:                   (4)\n" );
-  printf( "Ordenar pila:                  (5)\n" );
-  printf( "Eliminar la pila:              (6)\n" );
-  printf( "Salir:                         (7)\n" );
-  printf("\n\n");
+  printf( "\n\n" );
+  printf( "Ingrese el numero de opcion:\n" );
+  printf( "Crear cola:                   (1)\n" );
+  printf( "Agregar elemento a la cola:   (2)\n" );
+  printf( "Sacar elemento de la cola:    (3)\n" );
+  printf( "Listar cola:                  (4)\n" );
+  printf( "Invertir cola:                (5)\n" );
+  printf( "Eliminar la cola:             (6)\n" );
+  printf( "Salir:                        (7)\n" );
+  printf( "\n\n" );
 
   scanf( " %d", &temp_option );
   fflush( stdin );
 
-  return resolve_option( temp_option, stack );
+  return resolve_option( temp_option, queue );
 }
 
-Stack* resolve_option( int option, Stack* stack )
+Queue* resolve_option( int option, Queue* queue )
 {
   int input_user_value =  NULL;
   bool verbose =          true;
@@ -86,187 +76,178 @@ Stack* resolve_option( int option, Stack* stack )
   switch( option )
   {
     case 1:
-      stack = create_stack( verbose );
+      queue = create_queue( verbose );
     break;
     case 2:
-      stack = push( stack, input_user_value, verbose );
+      queue = enqueue( queue, input_user_value, verbose );
     break;
     case 3:
-      stack = pop( stack, verbose );
+      queue = dequeue( queue, verbose );
     break;
     case 4:
-      stack = show_stack( stack );
+      queue = show_queue( queue );
     break;
     case 5:
-      stack = sort_stack( stack );
+      queue = invert_queue( queue );
     break;
     case 6:
-      stack = delete_stack( stack );
+      queue = delete_queue( queue );
     break;
     case 7:
       exit( EXIT_SUCCESS );
     break;
   }
 
-  return stack;
+  return queue;
 }
 
-Stack* create_stack( bool is_verbose )
+Queue* create_queue( bool is_verbose )
 {
-  Stack* temp_stack = ( Stack* )malloc( sizeof( Stack ) );
-  temp_stack->top =   NULL;
-  
-  if( is_verbose ) printf("Se creo la pila %p\n", (void*)temp_stack);
+  Queue* temp_queue = (Queue*)malloc( sizeof( Queue ) );
+  temp_queue->front = NULL;
+  temp_queue->rear =  NULL;
 
-  return temp_stack;
+  if( is_verbose ) printf( "Se creo la cola %p\n", (void*)temp_queue );
+
+  return temp_queue;
 }
 
-/**
- *  push va a contar con un valor auxiliar que se le puede pasar a la funcion.
- *  esto es para distinguir el caso de uso frente a una usuario que ingresa valores 
- *  y cuando el programa lo utiliza para funciones internas.
-**/
-Stack* push( Stack* stack, int aux_value, bool is_verbose )
+Queue* enqueue( Queue* queue, int aux_value, bool is_verbose )
 {
-  int temp_number =     aux_value;
-  Node* little_stack =  NULL;
+  int temp_number = aux_value;
+  Node* new_node =  (Node*)malloc( sizeof( Node ) );
 
-  // Crear nodo que genera espacio de memoria
-  little_stack = ( Node* )malloc( sizeof( Node ) );
-  
   if( temp_number == NULL )
   {
-    // Cargar datos de nodo si no se paso un valor auxiliar
     printf( "Ingrese valor:\n" );
     scanf( " %d", &temp_number );
     fflush( stdin );
   }
 
-  // Cargar dato en el nuevo nodo
-  little_stack->number =  temp_number;
-    
-  // Reasigna direccion - apilar
-  little_stack->preview = stack->top;
-  stack->top =            little_stack;
+  new_node->number =  temp_number;
+  new_node->next =    NULL;
 
-  if( is_verbose ) printf( "Se creo el nodo %p y valor de memoria %d \n", (void*)little_stack, get_top_value( stack, is_verbose ) );
+  // Si la cola esta vacia el principio y el final hacen referencia al mismo elemento.
+  if( is_empty( queue, is_verbose ) )
+  {
+    queue->front =  new_node;
+    queue->rear =   new_node;
+  }
 
-  return stack;
+  // Actualiza las referencias del final de la cola para agregarlo.
+  queue->rear->next = new_node;
+  queue->rear =       new_node;
+
+  if( is_verbose ) printf( "Se encolo el nodo %p y valor de memoria %d \n", (void*)new_node, get_rear_value( queue, is_verbose ) );
+
+  return queue;
 }
 
-Stack* pop( Stack* stack, bool is_verbose )
+Queue* dequeue( Queue* queue, bool is_verbose )
 {
-  int value_erase;
-  Node* memory_erase;
+  if( is_empty( queue, is_verbose ) ) return queue;
 
-  if( is_empty( stack, is_verbose ) ) return stack;
+  int value_removed =   get_front_value( queue, is_verbose );
+  Node* node_removed =  queue->front;
 
-  // Crear nodo temporarl para operaciones
-  Node* temp =    stack->top;
+  // Chequeamos si es el unico elemento en la cola
+  if( queue->front == queue->rear )
+  {
+    queue->front =  NULL;
+    queue->rear =   NULL;
+  }
+  if( queue->front != queue->rear ) queue->front = queue->front->next;
 
-  // Gaurdar datos con los que se van a trabajar para debuggin
-  value_erase =   get_top_value( stack, is_verbose );
-  memory_erase =  temp;
+  free( node_removed );
 
-  // Reasignar memoria
-  stack->top =    temp->preview;
-  free( temp );
+  if( is_verbose ) printf( "Se desencolo el nodo %p y valor de memoria %d \n", (void*)node_removed, value_removed );
 
-  if( is_verbose ) printf( "Se borro el nodo %p y valor de memoria %d \n", (void*)memory_erase, value_erase );
-
-  return stack;
+  return queue;
 }
 
-bool is_empty( Stack* stack, bool is_verbose )
+bool is_empty( Queue* queue, bool is_verbose )
 {
-  if( stack->top != NULL ) return false;
+  if( queue->front != NULL ) return false;
 
-  if( is_verbose ) printf( "Pila vacia \n" );
+  if( is_verbose ) printf( "Cola vacia \n" );
   return true;
 }
 
-Stack* show_stack( Stack* stack )
+Queue* show_queue( Queue* queue )
 {
   bool verbose = true;
 
-  if( is_exist_stack( stack, verbose ) ) return stack;
-  if( is_empty( stack, verbose ) ) return stack;
+  if( is_empty( queue, verbose ) ) return queue;
 
-  Node* current = stack->top;
-  
-  printf( "Contenido de la pila: \n" );
+  Node* current = queue->front;
+
+  printf( "Contenido de la cola: \n" );
+  while( current != NULL )
+  {
+    printf("%d \n", current->number);
+    current = current->next;
+  }
+
+  return queue;
+}
+
+Queue* invert_queue(Queue* queue)
+{
+  bool no_verbose = false;
+
+  if( is_empty( queue, no_verbose ) || queue->front == queue->rear )
+  {
+    printf( "Cola invertida\n" );
+    return queue;
+  }
+
+  Node* prev =    NULL;
+  Node* next =    NULL;
+  Node* current = queue->front;
 
   while( current != NULL )
   {
-      printf( "%d \n", current->number );
-      current = current->preview;
+    next =          current->next;
+    current->next = prev;
+    prev =          current;
+    current =       next;
   }
 
-  return stack;
+  queue->rear =   queue->front;
+  queue->front =  prev;
+
+  printf( "Cola invertida\n" );
+  return queue;
 }
 
-// Ordenamiento por insetion sort
-Stack* sort_stack( Stack* stack )
+int get_front_value( Queue* queue, bool is_verbose )
 {
-  bool no_verbose = false;
-  Stack* sorted_stack = create_stack( no_verbose );
+  if( is_empty( queue, is_verbose ) ) return 0;
 
-  while( !is_empty( stack, no_verbose ) )
-  {
-    int current = get_top_value( stack, no_verbose );
-    pop( stack, no_verbose );
-
-    while( !is_empty( sorted_stack, no_verbose ) && get_top_value( sorted_stack, no_verbose ) > current )
-    {
-      int top_value = get_top_value( sorted_stack, no_verbose );
-      pop( sorted_stack, no_verbose );
-      push( stack, top_value, no_verbose );
-    }
-
-    push( sorted_stack, current, no_verbose );
-  }
-
-  while( !is_empty( sorted_stack, no_verbose ) )
-  {
-      int top_value = get_top_value( sorted_stack, no_verbose );
-      pop( sorted_stack, no_verbose );
-      push( stack, top_value, no_verbose );
-  }
-
-  printf( "Pila ordenada\n" );
-
-  return stack;
+  return queue->front->number;
 }
 
-int get_top_value( Stack* stack, bool is_verbose )
+int get_rear_value( Queue* queue, bool is_verbose )
 {
-  if( is_empty( stack, is_verbose ) ) return 0;
-  
-  return stack->top->number;
+  if( is_empty( queue, is_verbose ) ) return 0;
+
+  return queue->rear->number;
 }
 
-Stack* delete_stack( Stack* stack )
+Queue* delete_queue( Queue* queue )
 {
-  bool verbose = true;
+  bool verbose =    true;
   bool no_verbose = false;
 
-  if( is_empty( stack, verbose ) ) return stack;
+  if( is_empty( queue, verbose ) ) return queue;
 
-  while( !is_empty( stack, no_verbose ) )
+  while( !is_empty( queue, no_verbose ) )
   {
-    pop( stack, no_verbose );
+    dequeue(queue, no_verbose);
   }
 
-  free(stack);
+  free(queue);
 
-  printf("La pila ha sido eliminada\n");
+  printf( "La cola ha sido eliminada\n" );
   return NULL;
-}
-
-bool is_exist_stack( Stack* stack, bool is_verbose )
-{
-  if( stack != NULL ) return false;
-
-  if( is_verbose ) printf( "Pila no existe \n" );
-  return true;
 }
