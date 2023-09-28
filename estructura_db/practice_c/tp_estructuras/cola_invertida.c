@@ -30,6 +30,7 @@ Queue* invert_queue( Queue* );
 int get_front_value( Queue*, bool );
 int get_rear_value( Queue*, bool );
 Queue* delete_queue( Queue* );
+bool is_exist_queue( Queue*, bool );
 
 int main()
 {
@@ -176,7 +177,8 @@ bool is_empty( Queue* queue, bool is_verbose )
 Queue* show_queue( Queue* queue )
 {
   bool verbose = true;
-
+  
+  if( is_exist_queue( queue, verbose ) ) return queue;
   if( is_empty( queue, verbose ) ) return queue;
 
   Node* current = queue->front;
@@ -250,4 +252,12 @@ Queue* delete_queue( Queue* queue )
 
   printf( "La cola ha sido eliminada\n" );
   return NULL;
+}
+
+bool is_exist_queue( Queue* queue, bool is_verbose )
+{
+  if( queue != NULL ) return false;
+
+  if( is_verbose ) printf( "La cola no existe \n" );
+  return true;
 }
