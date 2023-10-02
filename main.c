@@ -21,35 +21,42 @@ typedef struct elemento
 } nodo;
 
 int menu( void );
-void cargapila( nodo**, registro[], int );
+void load_data( registro[], registro[] );
+void show_lists( registro[], registro[] );
 void mostrar( FILE* x );
 
 int main()
 {
-  int option =      0;
-  char* path_file = "./estructura_db/practice_c/tp_estructuras/data.dat";
-
-  registro info[] =
-  {
-    { 100235, "Nebulizador",          50,   145.20  },
-    { 100312, "Tensiometro",          120,  159.35  },
-    { 200045, "Caloventor",           35,   46.00   },
-    { 200511, "Estufa halogena",      15,   72.58   },
-    { 400805, "Afeitadora",           100,  215.40  },
-    { 400322, "Cortadora de Cabello", 210,  29.45   }
-  };
-
-  registro infocom[] =
-  {
-    { 500100, "Reproductor de DVD", 24, 200.53  },
-    { 100312, "Tensiometro",        50, 159.35  },
-    { 500235, "Televisor 21",       30, 565.60  },
-    { 200511, "Estufa halogena",    30, 72.58   }
-  };
+  int option =                0;
+  char* path_file =           "./estructura_db/practice_c/tp_estructuras/data.dat";
+  registro list_stock[6];
+  registro list_purchases[4];
 
   while( true )
   {
     option = menu();
+
+    switch( option )
+    {
+      case 1:
+        load_data( list_stock, list_purchases );
+      break;
+      case 2:
+        //show_lists( list_stock, list_purchases );
+      break;
+      case 3:
+        //update_join();
+      break;
+      case 4:
+        //show_order();
+      break;
+      case 5:
+        //write_disk();
+      break;
+      case 6:
+        //exit_erase();
+      break;
+    }
   }
 
   return 0;
@@ -76,18 +83,26 @@ int menu( void )
   return op;
 }
 
-void cargapila( nodo** x, registro y[], int z )
+void load_data( registro info[], registro infocom[] )
 {
-  int i;
-  nodo *q;
+  info[0] =     (registro){ 100235, "Nebulizador",           50,   145.20  };
+  info[1] =     (registro){ 100312, "Tensiometro",           120,  159.35  };
+  info[2] =     (registro){ 200045, "Caloventor",            35,   46.00   };
+  info[3] =     (registro){ 200511, "Estufa halogena",       15,   72.58   };
+  info[4] =     (registro){ 400805, "Afeitadora",            100,  215.40  };
+  info[5] =     (registro){ 400322, "Cortadora de Cabello",  210,  29.45   };
 
-  for(i=0;i<z;i++)
-  {
-    //q = ingresarDato( i,y );
-    //apilar( &(*x), q );
-  }
+  infocom[0] =  (registro){ 500100, "Reproductor de DVD",    24,   200.53  };
+  infocom[1] =  (registro){ 100312, "Tensiometro",           50,   159.35  };
+  infocom[2] =  (registro){ 500235, "Televisor 21",          30,   565.60  };
+  infocom[3] =  (registro){ 200511, "Estufa halogena",       30,   72.58   };
 
   return;
+}
+
+void show_lists( registro stock[], registro purchases[] )
+{
+  printf( "LISTA STOCK:\n" );
 }
 
 void mostrar( FILE* x )
