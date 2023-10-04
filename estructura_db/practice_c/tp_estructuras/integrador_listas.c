@@ -31,7 +31,7 @@ void free_list( nodo* );
 int main()
 {
   int option = 0;
-  char* path_file = "./estructura_db/practice_c/tp_estructuras/data.dat";
+  char* path_file = "./data.dat";
   registro info[] =
   {
     {100235, "Nebulizador", 50, 145.20},
@@ -179,6 +179,7 @@ void update_join( nodo** stock, nodo* purchase )
     
     current_purchase = current_purchase->sig;
   }
+  show_list(*stock);
   return;
 }
 
