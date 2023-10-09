@@ -90,7 +90,7 @@ void mostrarVotos(FILE *x)
 
     while( !feof( x ) )
     {
-        printf( "\t %d \t - \t %d - \t %d \n", r.cod_zona, r.num_lista, r.votos );
+        printf( "\t zona %d \t - \t lista %d - \t votos %d \n", r.cod_zona, r.num_lista, r.votos );
         fread( &r, sizeof(r), 1, x );
     }
 
@@ -177,7 +177,7 @@ void printer( FILE* stream )
 
     while( !feof(stream) )
     {
-        printf( "\t %d \t - \t %d - \t %d \n", temp_data.cod_zona, temp_data.num_lista, temp_data.votos );
+        printf( "\t zona %d \t - \t lista %d - \t votos %d \n", temp_data.cod_zona, temp_data.num_lista, temp_data.votos );
         fread( &temp_data, sizeof(temp_data), 1, stream );
     }
 }
